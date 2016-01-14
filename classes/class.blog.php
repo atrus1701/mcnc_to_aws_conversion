@@ -43,7 +43,6 @@ class Blog
 		$row = array_merge( array(), $this->db_row );
 		$row['blog_id'] = $this->new_id;
 		$row['domain'] = $this->new_domain;
-		
 		return $row;
 	}
 }

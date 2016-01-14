@@ -56,13 +56,7 @@ class Database
 		}
 		catch( PDOException $e )
 		{
-			echo2( $e->getMessage() );
-			add_error(
-				$table_name,
-				$e->getMessage(),
-				"\n".print_r($select_sql, true)
-			);
-			return false;
+			script_die( 'Unable to determine if table `'.$dbname.'`.`'.$table_name.'` column `'.$column_name.'`.', $e->getMessage() );
 		}
 
 		$is_numeric_column = ( $data->rowCount() > 0 );
@@ -80,13 +74,7 @@ class Database
 		}
 		catch( PDOException $e )
 		{
-			echo2( $e->getMessage() );
-			add_error(
-				$table_name,
-				$e->getMessage(),
-				"\n".print_r($select_sql, true)
-			);
-			return false;
+			script_die( 'Unable to determine if table `'.$dbname.'`.`'.$table_name.'`.', $e->getMessage() );
 		}
 
 		$table_exists = ( $data->rowCount() > 0 );
