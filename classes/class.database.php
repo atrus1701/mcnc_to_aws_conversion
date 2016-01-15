@@ -56,7 +56,7 @@ class Database
 		}
 		catch( PDOException $e )
 		{
-			script_die( 'Unable to determine if table `'.$dbname.'`.`'.$table_name.'` column `'.$column_name.'`.', $e->getMessage() );
+			script_die( "Unable to determine if table `{$dbname}`.`{$table_name}` column '{$column_name}'.", $e->getMessage() );
 		}
 
 		$is_numeric_column = ( $data->rowCount() > 0 );
@@ -74,7 +74,7 @@ class Database
 		}
 		catch( PDOException $e )
 		{
-			script_die( 'Unable to determine if table `'.$dbname.'`.`'.$table_name.'`.', $e->getMessage() );
+			script_die( "Unable to determine if table `{$dbname}`.`{$table_name}`.", $e->getMessage() );
 		}
 
 		$table_exists = ( $data->rowCount() > 0 );

@@ -8,8 +8,10 @@ class Site
 	public $dbname;
 	public $dbprefix;
 	public $domain;
+	public $ipaddress;
+	public $path;
 	
-	public function __construct( $db, $name, $dbname, $dbprefix, $domain )
+	public function __construct( $db, $name, $dbname, $dbprefix, $domain, $ipaddress, $path )
 	{
 		$this->db = $db;
 		$this->name = $name;
@@ -17,6 +19,8 @@ class Site
 		$this->dbname = $dbname;
 		$this->dbprefix = $dbprefix;
 		$this->domain = $domain;
+		$this->ipaddress = $ipaddress;
+		$this->path = $path;
 	}
 	public function connect( $dbhost, $dbusername, $dbpassword, $dbname )
 	{
@@ -80,7 +84,7 @@ class Site
 		}
 		catch( PDOException $e )
 		{
-			script_die( 'Unable to retrieve '.$this->name.' blogs list.', $e->getMessage() );
+			script_die( "Unable to retrieve '{$this->name}' blogs list.", $e->getMessage() );
 		}
 		
 		return $blogs->fetchAll( PDO::FETCH_ASSOC );
@@ -95,7 +99,7 @@ class Site
 		}
 		catch( PDOException $e )
 		{
-			script_die( 'Unable to retrieve '.$this->name.' table list.', $e->getMessage() );
+			script_die( "Unable to retrieve '{$this->name}' table list.", $e->getMessage() );
 		}
 		
 		$key = 'Tables_in_'.$this->dbname;
@@ -126,7 +130,7 @@ class Site
 		}
 		catch( PDOException $e )
 		{
-			script_die( 'Unable to get result if domain mapped for blog '.$blog_id.'.', $e->getMessage() );
+			script_die( "Unable to get result if domain mapped for blog '{$blog_id}'.", $e->getMessage() );
 		}
 
 		$is_domain_mapped = ( $data->rowCount() > 0 );
@@ -150,7 +154,7 @@ class Site
 		}
 		catch( PDOException $e )
 		{
-			script_die( 'Unable to get domain mapped row for blog '.$blog_id.'.', $e->getMessage() );
+			script_die( "Unable to get domain mapped row for blog '{$blog_id}'.", $e->getMessage() );
 		}
 		
 		if( $data->rowCount() > 0 ) {
@@ -203,7 +207,7 @@ class Site
 		}
 		catch( PDOException $e )
 		{
-			script_die( 'Unable to get users for blog '.$blog_id.'.', $e->getMessage() );
+			script_die( "Unable to get users for blog '{$blog_id}'.", $e->getMessage() );
 		}
 		
 		return $data->fetchAll( PDO::FETCH_ASSOC );
@@ -219,7 +223,7 @@ class Site
 		}
 		catch( PDOException $e )
 		{
-			script_die( 'Unable to get usermeta for user '.$user_id.'.', $e->getMessage() );
+			script_die( "Unable to get usermeta for user '{$user_id}'.", $e->getMessage() );
 		}
 		
 		return $data->fetchAll( PDO::FETCH_ASSOC );
