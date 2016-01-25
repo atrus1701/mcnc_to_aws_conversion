@@ -196,6 +196,18 @@ function main()
 	create_table_redirection_modules( $awssites );
 	create_table_redirection_modules( $awspages );
 
+//----------------------------------------
+// Copy files
+//----------------------------------------
+	
+	echo2( "\n" );
+	copy_wp_files( $awssites );
+	copy_wp_files( $awspages );
+	
+	echo2( "\n" );
+	copy_uploads_files( $awssites );
+	copy_uploads_files( $awspages );
+
 	echo2( "\n" );
 	disconnect_sites();
 }
@@ -240,10 +252,10 @@ function create_sites()
 	global $db, $claspages, $pages, $awssites, $awspages;
 	
 	$db        = new Database();
-	$claspages = new OldSite( $db, 'clas-pages', $claspages_dbname, $claspages_prefix, 'clas-pages.uncc.edu', $claspages_ipaddress, $claspages_path );
-	$pages     = new OldSite( $db, 'pages', $pages_dbname, $pages_prefix, 'pages.uncc.edu', $pages_ipaddress, $pages_path );
-	$awssites  = new NewSite( $db, 'sites', $awssites_dbname, $awssites_prefix, 'sites.uncc.edu', $awssites_ipaddress, $awssites_path );
-	$awspages  = new NewSite( $db, 'pages', $awspages_dbname, $awspages_prefix, 'pages.uncc.edu', $awspages_ipaddress, $awspages_path );
+	$claspages = new OldSite( $db, 'clas-pages', $claspages_dbname, $claspages_prefix, 'clas-pages.uncc.edu', $claspages_ipaddress, $claspages_path, 'pages' );
+	$pages     = new OldSite( $db, 'pages', $pages_dbname, $pages_prefix, 'pages.uncc.edu', $pages_ipaddress, $pages_path, 'pages2' );
+	$awssites  = new NewSite( $db, 'sites', $awssites_dbname, $awssites_prefix, 'sites.uncc.edu', $awssites_ipaddress, $awssites_path, 'ec2-user' );
+	$awspages  = new NewSite( $db, 'pages', $awspages_dbname, $awspages_prefix, 'pages.uncc.edu', $awspages_ipaddress, $awspages_path, 'ec2-user' );
 	
 	$db->connect( $dbhost, $dbusername, $dbpassword );
 	$claspages->connect( $dbhost, $dbusername, $dbpassword, $claspages_dbname );
@@ -500,10 +512,6 @@ function create_table_itsec_temp( $site )
 	$site->create_table_itsec_temp();
 	echo2( "done.\n" );
 }
-
-
-
-
 function create_table_nbt_categories_relationships_table( $site )
 {
 	echo2( "Creating the nbt_categories_relationships table for new site '{$site->name}'..." );
@@ -522,10 +530,6 @@ function create_table_nbt_templates_categories( $site )
 	$site->create_table_nbt_templates_categories();
 	echo2( "done.\n" );
 }
-
-
-
-
 function create_table_wiki_subscriptions( $site )
 {
 	echo2( "Creating the wiki_subscriptions table for new site '{$site->name}'..." );
@@ -650,6 +654,18 @@ function create_table_redirection_modules( $site )
 {
 	echo2( "Creating the redirection_modules table(s) for new site '{$site->name}'..." );
 	$site->create_table_redirection_modules();
+	echo2( "done.\n" );
+}
+function copy_wp_files( $site )
+{
+	echo2( "Copy WordPress files for new site '{$site->name}'..." );
+	$site->copy_wp_folder();
+	echo2( "done.\n" );
+}
+function copy_uploads_files( $site )
+{
+	echo2( "Copy WordPress files for new site '{$site->name}'..." );
+	$site->copy_uploads_folder();
 	echo2( "done.\n" );
 }
 

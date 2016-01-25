@@ -932,5 +932,47 @@ class NewSite extends Site
 		
 		echo2( "done." );
 	}
+	public function copy_wp_folder()
+	{
+		global $claspages, $pages;
+		
+		$exclude_files = '--exclude wp-config.php --exclude=.git --exclude=error_log';
+		if( !$copy_all )
+		{
+			$exclude_files .= ' --exclude=wp-content/blogs.dir --exclude=wp-content/uploads';
+		}
+	
+		passthru( "rsync -az $exclude_files '{$old_site->username}@${$old_site->server_name}:{$old_site->wp_path}/'  {$this->wp_path}" );
+	}
+	public function copy_uploads_folder()
+	{
+		foreach( array_merge( array( $this->base_blog ), $this->blogs ) as $blog ) {
+			$this->copy_uploads_folder_for_blog( $blog );
+		}
+		
+		echo2( "\n" );
+	}
+	protected function copy_uploads_folder_for_blog( $blog )
+	{
+		echo2( "\n   Copy uploads folder for {$this->name} blog {$blog->new_id} from {$blog->old_site->name} blog {$blog->old_id}..." );
+		
+		$old_uploads_path = $blog->old_site->get_option( $blog->old_id, 'uploads_path' );
+		$new_uploads_path = $this->get_option( $blog->new_id, 'uploads_path' );
+		
+		if( ! $old_uploads_path )
+		{
+			echo2( "no old uploads path." );
+			return;
+		}
+		if( ! $new_uploads_path )
+		{
+			echo2( "no new uploads path." );
+			return;
+		}
+		
+		passthru( "rsync -az '{$blog->old_site->username}@${$blog->old_site->domain}:{$blog->old_site->path}/{$old_uploads_path}'  {$this->path}/{$new_uploads_path}" );
+		
+		echo2( "done." );
+	}	
 }
 

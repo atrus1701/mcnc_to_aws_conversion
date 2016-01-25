@@ -10,8 +10,9 @@ class Site
 	public $domain;
 	public $ipaddress;
 	public $path;
-	
-	public function __construct( $db, $name, $dbname, $dbprefix, $domain, $ipaddress, $path )
+	public $username;
+		
+	public function __construct( $db, $name, $dbname, $dbprefix, $domain, $ipaddress, $path, $username )
 	{
 		$this->db = $db;
 		$this->name = $name;
@@ -21,6 +22,7 @@ class Site
 		$this->domain = $domain;
 		$this->ipaddress = $ipaddress;
 		$this->path = $path;
+		$this->username = $username;
 	}
 	public function connect( $dbhost, $dbusername, $dbpassword, $dbname )
 	{
@@ -227,6 +229,31 @@ class Site
 		}
 		
 		return $data->fetchAll( PDO::FETCH_ASSOC );
+	}
+	public function get_option( $blog_id, $key )
+	{
+		$p = '';
+		if( $blog_id > 1 ) {
+			$p = "{$blog_id}_";
+		}
+		$options_table_name = $this->add_prefix( $p.'options' );
+		$select_sql = "SELECT `option_value` AS `value` FROM `{$options_table_name}` WHERE `option_name`={$key};";
+		
+		try
+		{
+			$data = $this->dbconnection->query( $select_sql );
+		}
+		catch( PDOException $e )
+		{
+			script_die( "Unable to get option for blog '{$blog_id}'.", "SELECT `option_value` AS `value` FROM `{$options_table_name}` WHERE `option_name`={$key};", $e->getMessage() );
+		}
+		
+		if( $data->rowCount() > 0 ) {
+			$return = $data->fetch( PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT );
+			return $return['value'];
+		}
+		
+		return NULL;
 	}
 }
 
