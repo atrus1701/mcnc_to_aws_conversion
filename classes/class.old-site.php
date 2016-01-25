@@ -23,21 +23,6 @@ class OldSite extends Site
 	{
 		$this->base_tables[] = $table_name;
 	}
-	public function get_sitemeta_data()
-	{
-		$sitemeta_table_name = $this->add_prefix( 'sitemeta' );
-		
-		try
-		{
-			$data = $this->dbconnection->query( "SELECT * FROM `{$sitemeta_table_name}`" );
-		}
-		catch( PDOException $e )
-		{
-			script_die( "Unable to get '{$this->name}' sitemeta data.", $e->getMessage() );
-		}
-		
-		return $data->fetchAll( PDO::FETCH_ASSOC );
-	}
 	public function get_sitemeta_value( $key )
 	{
 		$sitemeta_table_name = $this->add_prefix( 'sitemeta' );
@@ -48,7 +33,7 @@ class OldSite extends Site
 		}
 		catch( PDOException $e )
 		{
-			script_die( "Unable to get '{$this->name}' sitemeta data.", $e->getMessage() );
+			script_die( "Unable to get '{$this->name}' sitemeta data.", "SELECT * FROM `{$sitemeta_table_name}` WHERE `meta_key`='{$key}'", $e->getMessage() );
 		}
 		
 		if( $data->rowCount() > 0 ) {
@@ -58,150 +43,128 @@ class OldSite extends Site
 		
 		return NULL;
 	}
-	public function get_blog_versions()
+	public function get_table_rows( $table_name )
 	{
-		$blog_versions_table_name = $this->add_prefix( 'blog_versions' );
+		$table_name = $this->add_prefix( $table_name );
 		
 		try
 		{
-			$data = $this->dbconnection->query( "SELECT * FROM `{$blog_versions_table_name}`" );
+			$data = $this->dbconnection->query( "SELECT * FROM `{$table_name}`" );
 		}
 		catch( PDOException $e )
 		{
-			script_die( "Unable to get '{$this->name}' blog_versions data.", $e->getMessage() );
+			script_die( "Unable to get '{$this->name}' '{$table_name}' data.", "SELECT * FROM `{$table_name}`", $e->getMessage() );
 		}
 		
 		return $data->fetchAll( PDO::FETCH_ASSOC );
 	}
-	public function get_registration_log()
-	{
-		$registration_log_table_name = $this->add_prefix( 'registration_log' );
-		
-		try
-		{
-			$data = $this->dbconnection->query( "SELECT * FROM `{$registration_log_table_name}`" );
-		}
-		catch( PDOException $e )
-		{
-			script_die( "Unable to get '{$this->name}' registration_log data.", $e->getMessage() );
-		}
-		
-		return $data->fetchAll( PDO::FETCH_ASSOC );
-	}
-	public function get_options( $blog_id )
+	public function get_blog_table_rows( $blog_id, $table_name )
 	{
 		$p = '';
 		if( $blog_id > 1 ) {
 			$p = "{$blog_id}_";
 		}
 		
-		$options_table_name = $this->add_prefix( $p.'options' );
+		$table_name = $this->add_prefix( $p.$table_name );
 		
 		try
 		{
-			$data = $this->dbconnection->query( "SELECT * FROM `{$options_table_name}`" );
+			$data = $this->dbconnection->query( "SELECT * FROM `{$table_name}`" );
 		}
 		catch( PDOException $e )
 		{
-			script_die( "Unable to get '{$this->name}' '{$blog_id}_options' data.", $e->getMessage() );
+			script_die( "Unable to get '{$this->name}' '{$table_name}' data.", "SELECT * FROM `{$table_name}`", $e->getMessage() );
 		}
 		
 		return $data->fetchAll( PDO::FETCH_ASSOC );
 	}
-	public function get_posts( $blog_id )
+	public function get_blog_table_row( $blog_id, $table_name, $row_count )
 	{
 		$p = '';
 		if( $blog_id > 1 ) {
 			$p = "{$blog_id}_";
 		}
 		
-		$posts_table_name = $this->add_prefix( $p.'posts' );
+		$table_name = $this->add_prefix( $p.$table_name );
 		
 		try
 		{
-			$data = $this->dbconnection->query( "SELECT * FROM `{$posts_table_name}`" );
+			$data = $this->dbconnection->query( "SELECT * FROM `{$table_name}` LIMIT 1 OFFSET {$row_count}" );
 		}
 		catch( PDOException $e )
 		{
-			script_die( "Unable to get '{$this->name}' '{$blog_id}_posts' data.", $e->getMessage() );
+			script_die( "Unable to get '{$this->name}' '{$table_name}' data.", "SELECT * FROM `{$table_name}` LIMIT 1 OFFSET {$row_count}", $e->getMessage() );
 		}
 		
-		return $data->fetchAll( PDO::FETCH_ASSOC );
+		if( $data->rowCount() > 0 ) {
+			return $data->fetch( PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT );
+		}
+		
+		return NULL;
 	}
-	public function get_postmeta( $blog_id )
+	public function get_table_row( $table_name, $row_count )
+	{
+		$table_name = $this->add_prefix( $table_name );
+		
+		try
+		{
+			$data = $this->dbconnection->query( "SELECT * FROM `{$table_name}` LIMIT 1 OFFSET {$row_count}" );
+		}
+		catch( PDOException $e )
+		{
+			script_die( "Unable to get '{$this->name}' '{$table_name}' data.", "SELECT * FROM `{$table_name}` LIMIT 1 OFFSET {$row_count}", $e->getMessage() );
+		}
+		
+		if( $data->rowCount() > 0 ) {
+			return $data->fetch( PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT );
+		}
+		
+		return NULL;
+	}
+	public function get_blog_table_row_list( $blog_id, $table_name, $row_count, $limit = 1000 )
 	{
 		$p = '';
 		if( $blog_id > 1 ) {
 			$p = "{$blog_id}_";
 		}
 		
-		$postmeta_table_name = $this->add_prefix( $p.'postmeta' );
+		$table_name = $this->add_prefix( $p.$table_name );
+		$offset = $row_count * $limit;
 		
 		try
 		{
-			$data = $this->dbconnection->query( "SELECT * FROM `{$postmeta_table_name}`" );
+			$data = $this->dbconnection->query( "SELECT * FROM `{$table_name}` LIMIT {$limit} OFFSET {$offset}" );
 		}
 		catch( PDOException $e )
 		{
-			script_die( "Unable to get '{$this->name}' '{$blog_id}_postmeta' data.", $e->getMessage() );
+			script_die( "Unable to get '{$this->name}' '{$table_name}' data.", "SELECT * FROM `{$table_name}` LIMIT {$limit} OFFSET {$offset}", $e->getMessage() );
 		}
 		
-		return $data->fetchAll( PDO::FETCH_ASSOC );
+		if( $data->rowCount() > 0 ) {
+			return $data->fetchAll( PDO::FETCH_ASSOC );
+		}
+		
+		return NULL;
 	}
-	public function get_comments( $blog_id )
+	public function get_table_row_list( $table_name, $row_count, $limit = 1000 )
 	{
-		$p = '';
-		if( $blog_id > 1 ) {
-			$p = "{$blog_id}_";
-		}
-		
-		$comments_table_name = $this->add_prefix( $p.'comments' );
+		$table_name = $this->add_prefix( $table_name );
+		$offset = $row_count * $limit;
 		
 		try
 		{
-			$data = $this->dbconnection->query( "SELECT * FROM `{$comments_table_name}`" );
+			$data = $this->dbconnection->query( "SELECT * FROM `{$table_name}` LIMIT {$limit} OFFSET {$offset}" );
 		}
 		catch( PDOException $e )
 		{
-			script_die( "Unable to get '{$this->name}' '{$blog_id}_comments' data.", $e->getMessage() );
+			script_die( "Unable to get '{$this->name}' '{$table_name}' data.", "SELECT * FROM `{$table_name}` LIMIT {$limit} OFFSET {$offset}", $e->getMessage() );
 		}
 		
-		return $data->fetchAll( PDO::FETCH_ASSOC );
-	}
-	public function get_commentmeta( $blog_id )
-	{
-		$p = '';
-		if( $blog_id > 1 ) {
-			$p = "{$blog_id}_";
+		if( $data->rowCount() > 0 ) {
+			return $data->fetchAll( PDO::FETCH_ASSOC );
 		}
 		
-		$comments_table_name = $this->add_prefix( $p.'commentmeta' );
-		
-		try
-		{
-			$data = $this->dbconnection->query( "SELECT * FROM `{$commentmeta_table_name}`" );
-		}
-		catch( PDOException $e )
-		{
-			script_die( "Unable to get '{$this->name}' '{$blog_id}_commentmeta' data.", $e->getMessage() );
-		}
-		
-		return $data->fetchAll( PDO::FETCH_ASSOC );
-	}
-	public function get_links( $blog_id )
-	{
-	}
-	public function get_terms( $blog_id )
-	{
-	}
-	public function get_term_taxonomy( $blog_id )
-	{
-	}
-	public function get_term_relationships( $blog_id )
-	{
-	}
-	public function get_termmeta( $blog_id )
-	{
+		return NULL;
 	}
 }
 

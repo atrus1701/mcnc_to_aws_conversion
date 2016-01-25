@@ -18,7 +18,7 @@ class Database
 		catch( PDOException $e )
 		{
 			$this->dbconnection = null;
-			script_die( 'Unable to connect to the database.', $e->getMessage() );
+			script_die( 'Unable to connect to the database.', "mysql:host={$dbhost};dbname=information_schema;charset=utf8", $e->getMessage() );
 		}
 	}
 	public function disconnect()
@@ -56,7 +56,7 @@ class Database
 		}
 		catch( PDOException $e )
 		{
-			script_die( "Unable to determine if table `{$dbname}`.`{$table_name}` column '{$column_name}'.", $e->getMessage() );
+			script_die( "Unable to determine if table `{$dbname}`.`{$table_name}` column '{$column_name}'.", "SELECT 1 FROM `columns` WHERE TABLE_SCHEMA = '{$dbname}' AND TABLE_NAME = '{$table_name}' AND COLUMN_NAME = '{$column_name}' AND NUMERIC_PRECISION IS NOT NULL;", $e->getMessage() );
 		}
 
 		$is_numeric_column = ( $data->rowCount() > 0 );
@@ -74,7 +74,7 @@ class Database
 		}
 		catch( PDOException $e )
 		{
-			script_die( "Unable to determine if table `{$dbname}`.`{$table_name}`.", $e->getMessage() );
+			script_die( "Unable to determine if table `{$dbname}`.`{$table_name}`.", "SELECT 1 FROM `tables` WHERE TABLE_SCHEMA = '{$dbname}' AND TABLE_NAME = '{$table_name}';", $e->getMessage() );
 		}
 
 		$table_exists = ( $data->rowCount() > 0 );

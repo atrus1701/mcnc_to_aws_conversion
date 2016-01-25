@@ -7,7 +7,7 @@
  * @author     Crystal Barton <atrus1701@gmail.com>
  */
 
-ini_set( 'memory_limit', -1 );
+ini_set( 'memory_limit', '768M' );
 ini_set( 'max_execution_time', 0 );
 
 require_once( __DIR__.'/config.php' );
@@ -107,58 +107,54 @@ function main()
 //----------------------------------------
 
 	echo2( "\n" );
-//	create_table_batch_create_table_queue( $awssites );
-//	create_table_batch_create_table_queue( $awspages );
-//	create_table_batch_create_table_queuemeta( $awssites );
-//	create_table_batch_create_table_queuemeta( $awspages );
+	create_table_batch_create_table_queue( $awssites );
+	create_table_batch_create_table_queue( $awspages );
+	create_table_batch_create_table_queuemeta( $awssites );
+	create_table_batch_create_table_queuemeta( $awspages );
 
 	echo2( "\n" );
-//	create_table_frmpro_copies( $awssites );
-//	create_table_frmpro_copies( $awspages );
+	create_table_frmpro_copies( $awssites );
+	create_table_frmpro_copies( $awspages );
 
 	echo2( "\n" );
-//	create_table_gaplus_login( $awssites );
-//	create_table_gaplus_login( $awspages );
+	create_table_gaplus_login( $awssites );
+	create_table_gaplus_login( $awspages );
 
 	echo2( "\n" );
-//	create_table_itsec_lockouts( $awssites );
-//	create_table_itsec_lockouts( $awspages );
-//	create_table_itsec_log( $awssites );
-//	create_table_itsec_log( $awspages );
-//	create_table_itsec_temp( $awssites );
-//	create_table_itsec_temp( $awspages );
+	create_table_itsec_lockouts( $awssites );
+	create_table_itsec_lockouts( $awspages );
+	create_table_itsec_log( $awssites );
+	create_table_itsec_log( $awspages );
+	create_table_itsec_temp( $awssites );
+	create_table_itsec_temp( $awspages );
 
 	echo2( "\n" );
-//	create_table_nbt_categories_relationships_table( $awssites );
-//	create_table_nbt_categories_relationships_table( $awspages );
-//	create_table_nbt_templates( $awssites );
-//	create_table_nbt_templates( $awspages );
-//	create_table_nbt_templates_categories( $awssites );
-//	create_table_nbt_templates_categories( $awspages );
+	create_table_nbt_categories_relationships_table( $awssites );
+	create_table_nbt_categories_relationships_table( $awspages );
+	create_table_nbt_templates( $awssites );
+	create_table_nbt_templates( $awspages );
+	create_table_nbt_templates_categories( $awssites );
+	create_table_nbt_templates_categories( $awspages );
 
 	echo2( "\n" );
-//	create_table_wiki_subscriptions( $awssites );
-//	create_table_wiki_subscriptions( $awspages );
+	create_table_wiki_subscriptions( $awspages );
 
 	echo2( "\n" );
-//	create_table_orghub_category( $awssites );
-//	create_table_orghub_category( $awspages );
-//	create_table_orghub_connections( $awssites );
-//	create_table_orghub_connections( $awspages );
-//	create_table_orghub_site( $awssites );
-//	create_table_orghub_site( $awspages );
-//	create_table_orghub_type( $awssites );
-//	create_table_orghub_type( $awspages );
-//	create_table_orghub_upload( $awssites );
-//	create_table_orghub_upload( $awspages );
-//	create_table_orghub_user( $awssites );
-//	create_table_orghub_user( $awspages );
+	create_table_orghub_category( $awssites );
+	create_table_orghub_category( $awspages );
+	create_table_orghub_connections( $awssites );
+	create_table_orghub_connections( $awspages );
+	create_table_orghub_site( $awssites );
+	create_table_orghub_site( $awspages );
+	create_table_orghub_type( $awssites );
+	create_table_orghub_type( $awspages );
+	create_table_orghub_upload( $awssites );
+	create_table_orghub_upload( $awspages );
+	create_table_orghub_user( $awssites );
+	create_table_orghub_user( $awspages );
 
 	echo2( "\n" );
-//	create_table_tt_site( $awssites );
-//	create_table_tt_site( $awspages );
-
-	echo2( "\n" );
+//  Don't copy...
 //	create_table_smackcsv_line_log( $awssites );
 //	create_table_smackcsv_pie_log( $awspages );
 
@@ -167,38 +163,38 @@ function main()
 //----------------------------------------
 	
 	echo2( "\n" );
-// 	create_table_frm_forms( $awssites );
-// 	create_table_frm_forms( $awspages );
-// 	create_table_frm_fields( $awssites );
-// 	create_table_frm_fields( $awspages );
-// 	create_table_frm_items( $awssites );
-// 	create_table_frm_items( $awspages );
-// 	create_table_frm_item_metas( $awssites );
-// 	create_table_frm_item_metas( $awspages );
+ 	create_table_frm_forms( $awssites );
+ 	create_table_frm_forms( $awspages );
+	create_table_frm_fields( $awssites );
+	create_table_frm_fields( $awspages );
+	create_table_frm_items( $awssites );
+	create_table_frm_items( $awspages );
+	create_table_frm_item_metas( $awssites );
+	create_table_frm_item_metas( $awspages );
 
 	echo2( "\n" );
-//	create_table_wpmm_subscribers( $awssites );
-//	create_table_wpmm_subscribers( $awspages );
+	create_table_wpmm_subscribers( $awssites );
+	create_table_wpmm_subscribers( $awspages );
 
 	echo2( "\n" );
-//	create_table_ngg_album( $awssites );
-//	create_table_ngg_album( $awspages );
-//	create_table_ngg_gallery( $awssites );
-//	create_table_ngg_gallery( $awspages );
-//	create_table_ngg_pictures( $awssites );
-//	create_table_ngg_pictures( $awspages );
+	create_table_ngg_album( $awssites );
+	create_table_ngg_album( $awspages );
+	create_table_ngg_gallery( $awssites );
+	create_table_ngg_gallery( $awspages );
+	create_table_ngg_pictures( $awssites );
+	create_table_ngg_pictures( $awspages );
 
 	echo2( "\n" );
-//	create_table_redirection_404( $awssites );
-//	create_table_redirection_404( $awspages );
-//	create_table_redirection_groups( $awssites );
-//	create_table_redirection_groups( $awspages );
-//	create_table_redirection_items( $awssites );
-//	create_table_redirection_items( $awspages );
-//	create_table_redirection_logs( $awssites );
-//	create_table_redirection_logs( $awspages );
-//	create_table_redirection_modules( $awssites );
-//	create_table_redirection_modules( $awspages );
+	create_table_redirection_404( $awssites );
+	create_table_redirection_404( $awspages );
+	create_table_redirection_groups( $awssites );
+	create_table_redirection_groups( $awspages );
+	create_table_redirection_items( $awssites );
+	create_table_redirection_items( $awspages );
+	create_table_redirection_logs( $awssites );
+	create_table_redirection_logs( $awspages );
+	create_table_redirection_modules( $awssites );
+	create_table_redirection_modules( $awspages );
 
 	echo2( "\n" );
 	disconnect_sites();
@@ -462,7 +458,200 @@ function create_table_termmeta( $site )
 	$site->create_table_termmeta();
 	echo2( "done.\n" );
 }
+function create_table_batch_create_table_queue( $site )
+{
+	echo2( "Creating the batch_create_table_queue table for new site '{$site->name}'..." );
+	$site->create_table_batch_create_table_queue();
+	echo2( "done.\n" );
+}
+function create_table_batch_create_table_queuemeta( $site )
+{
+	echo2( "Creating the batch_create_table_queuemeta table for new site '{$site->name}'..." );
+	$site->create_table_batch_create_table_queuemeta();
+	echo2( "done.\n" );
+}
+function create_table_frmpro_copies( $site )
+{
+	echo2( "Creating the frmpro_copies table for new site '{$site->name}'..." );
+	$site->create_table_frmpro_copies();
+	echo2( "done.\n" );
+}
+function create_table_gaplus_login( $site )
+{
+	echo2( "Creating the gaplus_login table for new site '{$site->name}'..." );
+	$site->create_table_gaplus_login();
+	echo2( "done.\n" );
+}
+function create_table_itsec_lockouts( $site )
+{
+	echo2( "Creating the itsec_lockouts table for new site '{$site->name}'..." );
+	$site->create_table_itsec_lockouts();
+	echo2( "done.\n" );
+}
+function create_table_itsec_log( $site )
+{
+	echo2( "Creating the itsec_log table for new site '{$site->name}'..." );
+	$site->create_table_itsec_log();
+	echo2( "done.\n" );
+}
+function create_table_itsec_temp( $site )
+{
+	echo2( "Creating the itsec_temp table for new site '{$site->name}'..." );
+	$site->create_table_itsec_temp();
+	echo2( "done.\n" );
+}
 
+
+
+
+function create_table_nbt_categories_relationships_table( $site )
+{
+	echo2( "Creating the nbt_categories_relationships table for new site '{$site->name}'..." );
+	$site->create_table_nbt_categories_relationships_table();
+	echo2( "done.\n" );
+}
+function create_table_nbt_templates( $site )
+{
+	echo2( "Creating the nbt_templates table for new site '{$site->name}'..." );
+	$site->create_table_nbt_templates();
+	echo2( "done.\n" );
+}
+function create_table_nbt_templates_categories( $site )
+{
+	echo2( "Creating the nbt_templates table for new site '{$site->name}'..." );
+	$site->create_table_nbt_templates_categories();
+	echo2( "done.\n" );
+}
+
+
+
+
+function create_table_wiki_subscriptions( $site )
+{
+	echo2( "Creating the wiki_subscriptions table for new site '{$site->name}'..." );
+	$site->create_table_wiki_subscriptions();
+	echo2( "done.\n" );
+}
+function create_table_orghub_category( $site )
+{
+	echo2( "Creating the orghub_category table for new site '{$site->name}'..." );
+	$site->create_table_orghub_category();
+	echo2( "done.\n" );
+}
+function create_table_orghub_connections( $site )
+{
+	echo2( "Creating the orghub_connections table for new site '{$site->name}'..." );
+	$site->create_table_orghub_connections();
+	echo2( "done.\n" );
+}
+function create_table_orghub_site( $site )
+{
+	echo2( "Creating the orghub_site table for new site '{$site->name}'..." );
+	$site->create_table_orghub_site();
+	echo2( "done.\n" );
+}
+function create_table_orghub_type( $site )
+{
+	echo2( "Creating the orghub_type table for new site '{$site->name}'..." );
+	$site->create_table_orghub_type();
+	echo2( "done.\n" );
+}
+function create_table_orghub_upload( $site )
+{
+	echo2( "Creating the orghub_upload table for new site '{$site->name}'..." );
+	$site->create_table_orghub_upload();
+	echo2( "done.\n" );
+}
+function create_table_orghub_user( $site )
+{
+	echo2( "Creating the orghub_user table for new site '{$site->name}'..." );
+	$site->create_table_orghub_user();
+	echo2( "done.\n" );
+}
+function create_table_smackcsv_line_log( $site )
+{
+	echo2( "Creating the smackcsv_line_log table for new site '{$site->name}'..." );
+	$site->create_table_smackcsv_line_log();
+	echo2( "done.\n" );
+}
+function create_table_frm_forms( $site )
+{
+	echo2( "Creating the frm_forms table(s) for new site '{$site->name}'..." );
+	$site->create_table_frm_forms();
+	echo2( "done.\n" );
+}
+function create_table_frm_fields( $site )
+{
+	echo2( "Creating the frm_fields table(s) for new site '{$site->name}'..." );
+	$site->create_table_frm_fields();
+	echo2( "done.\n" );
+}
+function create_table_frm_items( $site )
+{
+	echo2( "Creating the frm_items table(s) for new site '{$site->name}'..." );
+	$site->create_table_frm_items();
+	echo2( "done.\n" );
+}
+function create_table_frm_item_metas( $site )
+{
+	echo2( "Creating the frm_item_metas table(s) for new site '{$site->name}'..." );
+	$site->create_table_frm_item_metas();
+	echo2( "done.\n" );
+}
+function create_table_wpmm_subscribers( $site )
+{
+	echo2( "Creating the wpmm_subscribers table(s) for new site '{$site->name}'..." );
+	$site->create_table_wpmm_subscribers();
+	echo2( "done.\n" );
+}
+function create_table_ngg_album( $site )
+{
+	echo2( "Creating the ngg_album table(s) for new site '{$site->name}'..." );
+	$site->create_table_ngg_album();
+	echo2( "done.\n" );
+}
+function create_table_ngg_gallery( $site )
+{
+	echo2( "Creating the ngg_gallery table(s) for new site '{$site->name}'..." );
+	$site->create_table_ngg_gallery();
+	echo2( "done.\n" );
+}
+function create_table_ngg_pictures( $site )
+{
+	echo2( "Creating the ngg_pictures table(s) for new site '{$site->name}'..." );
+	$site->create_table_ngg_pictures();
+	echo2( "done.\n" );
+}
+function create_table_redirection_404( $site )
+{
+	echo2( "Creating the redirection_404 table(s) for new site '{$site->name}'..." );
+	$site->create_table_redirection_404();
+	echo2( "done.\n" );
+}
+function create_table_redirection_groups( $site )
+{
+	echo2( "Creating the redirection_groups table(s) for new site '{$site->name}'..." );
+	$site->create_table_redirection_groups();
+	echo2( "done.\n" );
+}
+function create_table_redirection_items( $site )
+{
+	echo2( "Creating the redirection_items table(s) for new site '{$site->name}'..." );
+	$site->create_table_redirection_items();
+	echo2( "done.\n" );
+}
+function create_table_redirection_logs( $site )
+{
+	echo2( "Creating the redirection_logs table(s) for new site '{$site->name}'..." );
+	$site->create_table_redirection_logs();
+	echo2( "done.\n" );
+}
+function create_table_redirection_modules( $site )
+{
+	echo2( "Creating the redirection_modules table(s) for new site '{$site->name}'..." );
+	$site->create_table_redirection_modules();
+	echo2( "done.\n" );
+}
 
 
 //========================================================================================

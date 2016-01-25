@@ -84,7 +84,7 @@ class Site
 		}
 		catch( PDOException $e )
 		{
-			script_die( "Unable to retrieve '{$this->name}' blogs list.", $e->getMessage() );
+			script_die( "Unable to retrieve '{$this->name}' blogs list.", "SELECT * FROM `{$this->dbprefix}blogs`", $e->getMessage() );
 		}
 		
 		return $blogs->fetchAll( PDO::FETCH_ASSOC );
@@ -99,7 +99,7 @@ class Site
 		}
 		catch( PDOException $e )
 		{
-			script_die( "Unable to retrieve '{$this->name}' table list.", $e->getMessage() );
+			script_die( "Unable to retrieve '{$this->name}' table list.", 'SHOW TABLES FROM '.$this->dbname, $e->getMessage() );
 		}
 		
 		$key = 'Tables_in_'.$this->dbname;
@@ -130,7 +130,7 @@ class Site
 		}
 		catch( PDOException $e )
 		{
-			script_die( "Unable to get result if domain mapped for blog '{$blog_id}'.", $e->getMessage() );
+			script_die( "Unable to get result if domain mapped for blog '{$blog_id}'.", "SELECT 1 FROM `{$domain_mapped_table_name}` WHERE `blog_id`=$blog_id;", $e->getMessage() );
 		}
 
 		$is_domain_mapped = ( $data->rowCount() > 0 );
@@ -154,7 +154,7 @@ class Site
 		}
 		catch( PDOException $e )
 		{
-			script_die( "Unable to get domain mapped row for blog '{$blog_id}'.", $e->getMessage() );
+			script_die( "Unable to get domain mapped row for blog '{$blog_id}'.", "SELECT * FROM `{$domain_mapped_table_name}` WHERE `blog_id`=$blog_id;", $e->getMessage() );
 		}
 		
 		if( $data->rowCount() > 0 ) {
@@ -182,7 +182,7 @@ class Site
 		}
 		catch( PDOException $e )
 		{
-			script_die( 'Unable to get admin user.', $e->getMessage() );
+			script_die( 'Unable to get admin user.', "SELECT `ID`,`user_login`,`user_pass`,`user_nicename`,`user_email`,`user_url`,`user_registered`,`user_activation_key`,`user_status`,`display_name`,`spam`,`deleted` FROM `{$users_table_name}` WHERE `ID`=1;", $e->getMessage() );
 		}
 		
 		if( $data->rowCount() > 0 ) {
@@ -207,7 +207,7 @@ class Site
 		}
 		catch( PDOException $e )
 		{
-			script_die( "Unable to get users for blog '{$blog_id}'.", $e->getMessage() );
+			script_die( "Unable to get users for blog '{$blog_id}'.", "SELECT `ID`,`user_login`,`user_pass`,`user_nicename`,`user_email`,`user_url`,`user_registered`,`user_activation_key`,`user_status`,`display_name`,`spam`,`deleted` FROM `{$users_table_name}` LEFT JOIN `{$usermeta_table_name}` ON `{$users_table_name}`.`ID`=`{$usermeta_table_name}`.`user_id` WHERE `{$usermeta_table_name}`.`meta_key` LIKE '{$blog_table_prefix}%';", $e->getMessage() );
 		}
 		
 		return $data->fetchAll( PDO::FETCH_ASSOC );
@@ -223,7 +223,7 @@ class Site
 		}
 		catch( PDOException $e )
 		{
-			script_die( "Unable to get usermeta for user '{$user_id}'.", $e->getMessage() );
+			script_die( "Unable to get usermeta for user '{$user_id}'.", "SELECT `meta_key` AS `key`, `meta_value` AS `value` FROM `{$usermeta_table_name}` WHERE `user_id`={$user_id};", $e->getMessage() );
 		}
 		
 		return $data->fetchAll( PDO::FETCH_ASSOC );
