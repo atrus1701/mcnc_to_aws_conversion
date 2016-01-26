@@ -942,7 +942,8 @@ class NewSite extends Site
 			$exclude_files .= ' --exclude=wp-content/blogs.dir --exclude=wp-content/uploads';
 		}
 	
-		passthru( "rsync -az $exclude_files '{$old_site->username}@${$old_site->server_name}:{$old_site->wp_path}/'  {$this->wp_path}" );
+		passthru( "rsync -az $exclude_files '{$claspages->path}/'  '{{$this->path}/'" );
+		passthru( "rsync -az $exclude_files '{$pages->path}/'  '{$this->path}/'" );
 	}
 	public function copy_uploads_folder()
 	{
@@ -970,7 +971,7 @@ class NewSite extends Site
 			return;
 		}
 		
-		passthru( "rsync -az '{$blog->old_site->username}@${$blog->old_site->domain}:{$blog->old_site->path}/{$old_uploads_path}'  {$this->path}/{$new_uploads_path}" );
+		passthru( "rsync -az '{$blog->old_site->path}/{$old_uploads_path}'  '{$this->path}/{$new_uploads_path}'" );
 		
 		echo2( "done." );
 	}	

@@ -24,7 +24,7 @@ require_once( __DIR__.'/classes/class.user.php' );
  */
 function main()
 {
-	global $db, $claspages, $pages, $awssites, $awspages, 
+	global $db, $claspages, $pages, $thissite, 
 		$claspages_to_sites_slugs, $pages_to_sites_slugs;
 	
 	clear_log();
@@ -37,10 +37,7 @@ function main()
 	echo2( "\n" );
 	add_blogs_to_new_sites( $claspages, $claspages_to_sites_slugs );
 	add_blogs_to_new_sites( $pages, $pages_to_sites_slugs );
-	assign_new_blog_ids( $awssites );
-	assign_new_blog_ids( $awspages );
-	assign_blog_tables( $claspages );
-	assign_blog_tables( $pages );
+	assign_new_blog_ids();
 	assign_base_blog();
 	
 //----------------------------------------
@@ -48,165 +45,114 @@ function main()
 //----------------------------------------
 	
 	echo2( "\n" );
-	assign_site_users( $awssites );
-	assign_site_users( $awspages );
-	assign_new_user_ids( $awssites );
-	assign_new_user_ids( $awspages );
+	assign_site_users();
+	assign_new_user_ids();
 
 //----------------------------------------
 // Main Site tables
 //----------------------------------------
 	
 	echo2( "\n" );
-	create_table_site( $awssites );
-	create_table_site( $awspages );
-	create_table_sitemeta( $awssites );
-	create_table_sitemeta( $awspages );
-	create_table_blogs( $awssites );
-	create_table_blogs( $awspages );
-	create_table_domain_mapping( $awssites );
-	create_table_users( $awssites );
-	create_table_users( $awspages );
-	create_table_usermeta( $awssites );
-	create_table_usermeta( $awspages );
-	create_table_blog_versions( $awssites );
-	create_table_blog_versions( $awspages );
-	create_table_registration_log( $awssites );
-	create_table_registration_log( $awspages );
-	create_table_signups( $awssites );
-	create_table_signups( $awspages );
+	create_table_site();
+	create_table_sitemeta();
+	create_table_blogs();
+	create_table_domain_mapping();
+	create_table_users();
+	create_table_usermeta();
+	create_table_blog_versions();
+	create_table_registration_log();
+	create_table_signups();
 
 //----------------------------------------
 // Main Blog tables
 //----------------------------------------
 
 	echo2( "\n" );
-	create_table_options( $awssites );
-	create_table_options( $awspages );
-	create_table_posts( $awssites );
-	create_table_posts( $awspages );
-	create_table_postmeta( $awssites );
-	create_table_postmeta( $awspages );
-	create_table_comments( $awssites );
-	create_table_comments( $awspages );
-	create_table_commentmeta( $awssites );
-	create_table_commentmeta( $awspages );
-	create_table_links( $awssites );
-	create_table_links( $awspages );
-	create_table_terms( $awssites );
-	create_table_terms( $awspages );
-	create_table_term_taxonomy( $awssites );
-	create_table_term_taxonomy( $awspages );
-	create_table_term_relationships( $awssites );
-	create_table_term_relationships( $awspages );
-	create_table_termmeta( $awssites );
-	create_table_termmeta( $awspages );
+	create_table_options();
+	create_table_posts();
+	create_table_postmeta();
+	create_table_comments();
+	create_table_commentmeta();
+	create_table_links();
+	create_table_terms();
+	create_table_term_taxonomy();
+	create_table_term_relationships();
+	create_table_termmeta();
 
 //----------------------------------------
 // Plugin Site tables
 //----------------------------------------
 
 	echo2( "\n" );
-	create_table_batch_create_table_queue( $awssites );
-	create_table_batch_create_table_queue( $awspages );
-	create_table_batch_create_table_queuemeta( $awssites );
-	create_table_batch_create_table_queuemeta( $awspages );
+	create_table_batch_create_table_queue();
+	create_table_batch_create_table_queuemeta();
 
 	echo2( "\n" );
-	create_table_frmpro_copies( $awssites );
-	create_table_frmpro_copies( $awspages );
+	create_table_frmpro_copies();
 
 	echo2( "\n" );
-	create_table_gaplus_login( $awssites );
-	create_table_gaplus_login( $awspages );
+	create_table_gaplus_login();
 
 	echo2( "\n" );
-	create_table_itsec_lockouts( $awssites );
-	create_table_itsec_lockouts( $awspages );
-	create_table_itsec_log( $awssites );
-	create_table_itsec_log( $awspages );
-	create_table_itsec_temp( $awssites );
-	create_table_itsec_temp( $awspages );
+	create_table_itsec_lockouts();
+	create_table_itsec_log();
+	create_table_itsec_temp();
 
 	echo2( "\n" );
-	create_table_nbt_categories_relationships_table( $awssites );
-	create_table_nbt_categories_relationships_table( $awspages );
-	create_table_nbt_templates( $awssites );
-	create_table_nbt_templates( $awspages );
-	create_table_nbt_templates_categories( $awssites );
-	create_table_nbt_templates_categories( $awspages );
+	create_table_nbt_categories_relationships_table();
+	create_table_nbt_templates();
+	create_table_nbt_templates_categories();
 
 	echo2( "\n" );
-	create_table_wiki_subscriptions( $awspages );
+	create_table_wiki_subscriptions();
 
 	echo2( "\n" );
-	create_table_orghub_category( $awssites );
-	create_table_orghub_category( $awspages );
-	create_table_orghub_connections( $awssites );
-	create_table_orghub_connections( $awspages );
-	create_table_orghub_site( $awssites );
-	create_table_orghub_site( $awspages );
-	create_table_orghub_type( $awssites );
-	create_table_orghub_type( $awspages );
-	create_table_orghub_upload( $awssites );
-	create_table_orghub_upload( $awspages );
-	create_table_orghub_user( $awssites );
-	create_table_orghub_user( $awspages );
+	create_table_orghub_category();
+	create_table_orghub_connections();
+	create_table_orghub_site();
+	create_table_orghub_type();
+	create_table_orghub_upload();
+	create_table_orghub_user();
 
-	echo2( "\n" );
+// 	echo2( "\n" );
 //  Don't copy...
-//	create_table_smackcsv_line_log( $awssites );
-//	create_table_smackcsv_pie_log( $awspages );
+//	create_table_smackcsv_line_log();
+//	create_table_smackcsv_pie_log();
 
 //----------------------------------------
 // Plugin Blog tables
 //----------------------------------------
 	
 	echo2( "\n" );
- 	create_table_frm_forms( $awssites );
- 	create_table_frm_forms( $awspages );
-	create_table_frm_fields( $awssites );
-	create_table_frm_fields( $awspages );
-	create_table_frm_items( $awssites );
-	create_table_frm_items( $awspages );
-	create_table_frm_item_metas( $awssites );
-	create_table_frm_item_metas( $awspages );
+	create_table_frm_forms();
+	create_table_frm_fields();
+	create_table_frm_items();
+	create_table_frm_item_metas();
 
 	echo2( "\n" );
-	create_table_wpmm_subscribers( $awssites );
-	create_table_wpmm_subscribers( $awspages );
+	create_table_wpmm_subscribers();
 
 	echo2( "\n" );
-	create_table_ngg_album( $awssites );
-	create_table_ngg_album( $awspages );
-	create_table_ngg_gallery( $awssites );
-	create_table_ngg_gallery( $awspages );
-	create_table_ngg_pictures( $awssites );
-	create_table_ngg_pictures( $awspages );
+	create_table_ngg_album();
+	create_table_ngg_gallery();
+	create_table_ngg_pictures();
 
 	echo2( "\n" );
-	create_table_redirection_404( $awssites );
-	create_table_redirection_404( $awspages );
-	create_table_redirection_groups( $awssites );
-	create_table_redirection_groups( $awspages );
-	create_table_redirection_items( $awssites );
-	create_table_redirection_items( $awspages );
-	create_table_redirection_logs( $awssites );
-	create_table_redirection_logs( $awspages );
-	create_table_redirection_modules( $awssites );
-	create_table_redirection_modules( $awspages );
+	create_table_redirection_404();
+	create_table_redirection_groups();
+	create_table_redirection_items();
+	create_table_redirection_logs();
+	create_table_redirection_modules();
 
 //----------------------------------------
 // Copy files
 //----------------------------------------
 	
 	echo2( "\n" );
-	copy_wp_files( $awssites );
-	copy_wp_files( $awspages );
+	copy_wp_files();
 	
 	echo2( "\n" );
-	copy_uploads_files( $awssites );
-	copy_uploads_files( $awspages );
+	copy_uploads_files();
 
 	echo2( "\n" );
 	disconnect_sites();
@@ -243,80 +189,82 @@ function print_header( $text )
 }
 function create_sites()
 {
+	global $dbhost, $dbusername, $dbpassword;
+	global $claspages_name, $pages_name, $this_name;
+	global $claspages_dbname, $pages_dbname, $this_dbname;
+	global $claspages_prefix, $pages_prefix, $this_prefix;
+	global $claspages_domain, $pages_domain, $this_domain;
+	global $claspages_ipaddress, $pages_ipaddress, $this_ipaddress;
+	global $claspages_path, $pages_path, $this_path;
+	global $claspages_user, $pages_user, $this_user;
+	global $db, $claspages, $pages, $thissite;
 	echo2( "Creating sites..." );
 	
-	global $dbhost, $dbusername, $dbpassword, $claspages_dbname, $pages_dbname, $awssites_dbname, $awspages_dbname;
-	global $claspages_prefix, $pages_prefix, $awssites_prefix, $awspages_prefix;
-	global $claspages_ipaddress, $pages_ipaddress, $awssites_ipaddress, $awspages_ipaddress;
-	global $claspages_path, $pages_path, $awssites_path, $awspages_path;
-	global $db, $claspages, $pages, $awssites, $awspages;
-	
 	$db        = new Database();
-	$claspages = new OldSite( $db, 'clas-pages', $claspages_dbname, $claspages_prefix, 'clas-pages.uncc.edu', $claspages_ipaddress, $claspages_path, 'pages' );
-	$pages     = new OldSite( $db, 'pages', $pages_dbname, $pages_prefix, 'pages.uncc.edu', $pages_ipaddress, $pages_path, 'pages2' );
-	$awssites  = new NewSite( $db, 'sites', $awssites_dbname, $awssites_prefix, 'sites.uncc.edu', $awssites_ipaddress, $awssites_path, 'ec2-user' );
-	$awspages  = new NewSite( $db, 'pages', $awspages_dbname, $awspages_prefix, 'pages.uncc.edu', $awspages_ipaddress, $awspages_path, 'ec2-user' );
+	$claspages = new OldSite( $db, $claspages_name, $claspages_dbname, $claspages_prefix, $claspages_domain, $claspages_ipaddress, $claspages_path, $claspages_user );
+	$pages     = new OldSite( $db, $pages_name, $pages_dbname, $pages_prefix, $pages_domain, $pages_ipaddress, $pages_path, $pages_user );
+	$thissite  = new NewSite( $db, $this_name, $this_dbname, $this_prefix, $this_domain, $this_ipaddress, $this_path, $this_user );
 	
 	$db->connect( $dbhost, $dbusername, $dbpassword );
 	$claspages->connect( $dbhost, $dbusername, $dbpassword, $claspages_dbname );
 	$pages->connect( $dbhost, $dbusername, $dbpassword, $pages_dbname );
-	$awssites->connect( $dbhost, $dbusername, $dbpassword, $awssites_dbname );
-	$awspages->connect( $dbhost, $dbusername, $dbpassword, $awspages_dbname );
+	$thissite->connect( $dbhost, $dbusername, $dbpassword, $this_dbname );
 	
 	echo2( "done.\n" );
 }
 function disconnect_sites()
 {
+	global $db, $claspages, $pages, $thissite;
 	echo2( "Disconnecting sites..." );
-	
-	global $db, $claspages, $pages, $awssites, $awspages;
 	
 	$db->disconnect();
 	$claspages->disconnect();
 	$pages->disconnect();
-	$awssites->disconnect();
-	$awspages->disconnect();
+	$thissite->disconnect();
 	
 	echo2( "done.\n" );
 }
 function add_blogs_to_new_sites( $site, $to_sites_slugs )
 {
-	echo2( "Add blogs from old site '{$site->name}'..." );
+	global $thissite;
+	echo2( "Add blogs from old site '{$thissite->name}'..." );
 	
-	global $awssites, $awspages;
-	
-	$blogs = $site->get_blogs();
+	$blogs = $thissite->get_blogs();
 	foreach( $blogs as $blog )
 	{
 		$slug = trim( $blog['path'], '/' );
 		if( $slug == '' ) {
-			$site->add_base_blog( $blog );
+			$thissite->add_base_blog( $blog );
 			continue;
 		}
 	
 		if( in_array( $slug, $to_sites_slugs ) ) {
-			$awssites->add_blog( $site, $blog );
+			if( $thissite->name == 'sites' ) {
+				$thissite->add_blog( $site, $blog );
+			}
 		} else {
-			$awspages->add_blog( $site, $blog );
+			if( $thissite->name == 'pages' ) {
+				$thissite->add_blog( $site, $blog );
+			}
 		}
 	}
 	$blogs = null;
 	
 	echo2( "done.\n" );
 }
-function assign_new_blog_ids( $site )
+function assign_new_blog_ids()
 {
-	echo2( "Assigning new blog ids for new site '{$site->name}'..." );
-	$site->assign_new_blog_ids();
+	global $thissite;
+	echo2( "Assigning new blog ids for new site '{$thissite->name}'..." );
+	$thissite->assign_new_blog_ids();
 	echo2( "done.\n" );
 }
-function assign_blog_tables( $site )
+function assign_blog_tables()
 {
-	echo2( "Assign blog tables from old site '{$site->name}'..." );
+	global $thissite;
+	echo2( "Assign blog tables from old site '{$thissite->name}'..." );
 	
-	global $awssites, $awspages;
-	
-	$table_list = $site->get_table_list( true );
+	$table_list = $thissite->get_table_list( true );
 	foreach( $table_list as $table_name )
 	{
 		if( strpos( $table_name, 'clas_uncc_' ) === 0 ) continue;
@@ -325,347 +273,413 @@ function assign_blog_tables( $site )
 	
 		if( $blog_id < 1 )
 		{
-			$site->add_base_table( $table_name );
+			$thissite->add_base_table( $table_name );
 			continue;
 		}
 	
-		$awssites->add_blog_table( $site->name, $blog_id, $table_name );
-		$awspages->add_blog_table( $site->name, $blog_id, $table_name );
+		$thissite->add_blog_table( $thissite->name, $blog_id, $table_name );
 	}
 	
 	echo2( "done.\n" );
 }
 function assign_base_blog()
 {
+	global $claspages, $pages, $thissite;
 	echo2( "Assigning base blogs..." );
-	global $claspages, $pages, $awssites, $awspages;
-	$awssites->assign_base_blog( $claspages );
-	$awspages->assign_base_blog( $pages );
+	
+	switch( $thissite->name )
+	{
+		case 'sites':
+			$thissite->assign_base_blog( $claspages );
+			break;
+		case 'pages':
+			$thissite->assign_base_blog( $pages );
+			break;
+		default:
+			echo2( "error.\n" );
+			return;
+			break;
+	}
+	
 	echo2( "done.\n" );
 }
-function assign_site_users( $site )
+function assign_site_users()
 {
-	echo2( "Assign users to new site '{$site->name}'..." );
-	$site->store_users();
-	$site->store_usermeta();
+	global $thissite;
+	echo2( "Assign users to new site '{$thissite->name}'..." );
+	$thissite->store_users();
+	$thissite->store_usermeta();
 	echo2( "done.\n" );
 }
-function assign_new_user_ids( $site )
+function assign_new_user_ids()
 {
-	echo2( "Assign new user ids for new site '{$site->name}'..." );
-	$site->assign_new_user_ids();
+	global $thissite;
+	echo2( "Assign new user ids for new site '{$thissite->name}'..." );
+	$thissite->assign_new_user_ids();
 	echo2( "done.\n" );
 }
-function create_table_site( $site )
+function create_table_site()
 {
-	echo2( "Creating the site table for new site '{$site->name}'..." );
-	$site->create_table_site();
+	global $thissite;
+	echo2( "Creating the site table for new site '{$thissite->name}'..." );
+	$thissite->create_table_site();
 	echo2( "done.\n" );
 }
-function create_table_sitemeta( $site )
+function create_table_sitemeta()
 {
-	echo2( "Creating the sitemeta table for new site '{$site->name}'..." );
-	$site->create_table_sitemeta();
+	global $thissite;
+	echo2( "Creating the sitemeta table for new site '{$thissite->name}'..." );
+	$thissite->create_table_sitemeta();
 	echo2( "done.\n" );
 }
-function create_table_blogs( $site )
+function create_table_blogs()
 {
-	echo2( "Creating the blogs table for new site '{$site->name}'..." );
-	$site->create_table_blogs();
+	global $thissite;
+	echo2( "Creating the blogs table for new site '{$thissite->name}'..." );
+	$thissite->create_table_blogs();
 	echo2( "done.\n" );
 }
-function create_table_domain_mapping( $site )
+function create_table_domain_mapping()
 {
-	echo2( "Creating the domain_mapping table for new site '{$site->name}'..." );
-	$site->create_table_domain_mapping();
+	global $thissite;
+	echo2( "Creating the domain_mapping table for new site '{$thissite->name}'..." );
+	$thissite->create_table_domain_mapping();
 	echo2( "done.\n" );
 }
-function create_table_users( $site )
+function create_table_users()
 {
-	echo2( "Creating the users table for new site '{$site->name}'..." );
-	$site->create_table_users();
+	global $thissite;
+	echo2( "Creating the users table for new site '{$thissite->name}'..." );
+	$thissite->create_table_users();
 	echo2( "done.\n" );
 }
-function create_table_usermeta( $site )
+function create_table_usermeta()
 {
-	echo2( "Creating the usermeta table for new site '{$site->name}'..." );
-	$site->create_table_usermeta();
+	global $thissite;
+	echo2( "Creating the usermeta table for new site '{$thissite->name}'..." );
+	$thissite->create_table_usermeta();
 	echo2( "done.\n" );
 }
-function create_table_blog_versions( $site )
+function create_table_blog_versions()
 {
-	echo2( "Creating the blog_versions table for new site '{$site->name}'..." );
-	$site->create_table_blog_versions();
+	global $thissite;
+	echo2( "Creating the blog_versions table for new site '{$thissite->name}'..." );
+	$thissite->create_table_blog_versions();
 	echo2( "done.\n" );
 }
-function create_table_registration_log( $site )
+function create_table_registration_log()
 {
-	echo2( "Creating the registration_log table for new site '{$site->name}'..." );
-	$site->create_table_registration_log();
+	global $thissite;
+	echo2( "Creating the registration_log table for new site '{$thissite->name}'..." );
+	$thissite->create_table_registration_log();
 	echo2( "done.\n" );
 }
-function create_table_signups( $site )
+function create_table_signups()
 {
-	echo2( "Creating the signups table for new site '{$site->name}'..." );
-	$site->create_table_signups();
+	global $thissite;
+	echo2( "Creating the signups table for new site '{$thissite->name}'..." );
+	$thissite->create_table_signups();
 	echo2( "done.\n" );
 }
-function create_table_options( $site )
+function create_table_options()
 {
-	echo2( "Creating the options table(s) for new site '{$site->name}'..." );
-	$site->create_table_options();
+	global $thissite;
+	echo2( "Creating the options table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_options();
 	echo2( "done.\n" );
 }
-function create_table_posts( $site )
+function create_table_posts()
 {
-	echo2( "Creating the posts table(s) for new site '{$site->name}'..." );
-	$site->create_table_posts();
+	global $thissite;
+	echo2( "Creating the posts table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_posts();
 	echo2( "done.\n" );
 }
-function create_table_postmeta( $site )
+function create_table_postmeta()
 {
-	echo2( "Creating the postmeta table(s) for new site '{$site->name}'..." );
-	$site->create_table_postmeta();
+	global $thissite;
+	echo2( "Creating the postmeta table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_postmeta();
 	echo2( "done.\n" );
 }
-function create_table_comments( $site )
+function create_table_comments()
 {
-	echo2( "Creating the comments table(s) for new site '{$site->name}'..." );
-	$site->create_table_comments();
+	global $thissite;
+	echo2( "Creating the comments table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_comments();
 	echo2( "done.\n" );
 }
-function create_table_commentmeta( $site )
+function create_table_commentmeta()
 {
-	echo2( "Creating the commentmeta table(s) for new site '{$site->name}'..." );
-	$site->create_table_commentmeta();
+	global $thissite;
+	echo2( "Creating the commentmeta table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_commentmeta();
 	echo2( "done.\n" );
 }
-function create_table_links( $site )
+function create_table_links()
 {
-	echo2( "Creating the links table(s) for new site '{$site->name}'..." );
-	$site->create_table_links();
+	global $thissite;
+	echo2( "Creating the links table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_links();
 	echo2( "done.\n" );
 }
-function create_table_terms( $site )
+function create_table_terms()
 {
-	echo2( "Creating the terms table(s) for new site '{$site->name}'..." );
-	$site->create_table_terms();
+	global $thissite;
+	echo2( "Creating the terms table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_terms();
 	echo2( "done.\n" );
 }
-function create_table_term_taxonomy( $site )
+function create_table_term_taxonomy()
 {
-	echo2( "Creating the term_taxonomy table(s) for new site '{$site->name}'..." );
-	$site->create_table_term_taxonomy();
+	global $thissite;
+	echo2( "Creating the term_taxonomy table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_term_taxonomy();
 	echo2( "done.\n" );
 }
-function create_table_term_relationships( $site )
+function create_table_term_relationships()
 {
-	echo2( "Creating the term_relationships table(s) for new site '{$site->name}'..." );
-	$site->create_table_term_relationships();
+	global $thissite;
+	echo2( "Creating the term_relationships table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_term_relationships();
 	echo2( "done.\n" );
 }
-function create_table_termmeta( $site )
+function create_table_termmeta()
 {
-	echo2( "Creating the termmeta table(s) for new site '{$site->name}'..." );
-	$site->create_table_termmeta();
+	global $thissite;
+	echo2( "Creating the termmeta table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_termmeta();
 	echo2( "done.\n" );
 }
-function create_table_batch_create_table_queue( $site )
+function create_table_batch_create_table_queue()
 {
-	echo2( "Creating the batch_create_table_queue table for new site '{$site->name}'..." );
-	$site->create_table_batch_create_table_queue();
+	global $thissite;
+	echo2( "Creating the batch_create_table_queue table for new site '{$thissite->name}'..." );
+	$thissite->create_table_batch_create_table_queue();
 	echo2( "done.\n" );
 }
-function create_table_batch_create_table_queuemeta( $site )
+function create_table_batch_create_table_queuemeta()
 {
-	echo2( "Creating the batch_create_table_queuemeta table for new site '{$site->name}'..." );
-	$site->create_table_batch_create_table_queuemeta();
+	global $thissite;
+	echo2( "Creating the batch_create_table_queuemeta table for new site '{$thissite->name}'..." );
+	$thissite->create_table_batch_create_table_queuemeta();
 	echo2( "done.\n" );
 }
-function create_table_frmpro_copies( $site )
+function create_table_frmpro_copies()
 {
-	echo2( "Creating the frmpro_copies table for new site '{$site->name}'..." );
-	$site->create_table_frmpro_copies();
+	global $thissite;
+	echo2( "Creating the frmpro_copies table for new site '{$thissite->name}'..." );
+	$thissite->create_table_frmpro_copies();
 	echo2( "done.\n" );
 }
-function create_table_gaplus_login( $site )
+function create_table_gaplus_login()
 {
-	echo2( "Creating the gaplus_login table for new site '{$site->name}'..." );
-	$site->create_table_gaplus_login();
+	global $thissite;
+	echo2( "Creating the gaplus_login table for new site '{$thissite->name}'..." );
+	$thissite->create_table_gaplus_login();
 	echo2( "done.\n" );
 }
-function create_table_itsec_lockouts( $site )
+function create_table_itsec_lockouts()
 {
-	echo2( "Creating the itsec_lockouts table for new site '{$site->name}'..." );
-	$site->create_table_itsec_lockouts();
+	global $thissite;
+	echo2( "Creating the itsec_lockouts table for new site '{$thissite->name}'..." );
+	$thissite->create_table_itsec_lockouts();
 	echo2( "done.\n" );
 }
-function create_table_itsec_log( $site )
+function create_table_itsec_log()
 {
-	echo2( "Creating the itsec_log table for new site '{$site->name}'..." );
-	$site->create_table_itsec_log();
+	global $thissite;
+	echo2( "Creating the itsec_log table for new site '{$thissite->name}'..." );
+	$thissite->create_table_itsec_log();
 	echo2( "done.\n" );
 }
-function create_table_itsec_temp( $site )
+function create_table_itsec_temp()
 {
-	echo2( "Creating the itsec_temp table for new site '{$site->name}'..." );
-	$site->create_table_itsec_temp();
+	global $thissite;
+	echo2( "Creating the itsec_temp table for new site '{$thissite->name}'..." );
+	$thissite->create_table_itsec_temp();
 	echo2( "done.\n" );
 }
-function create_table_nbt_categories_relationships_table( $site )
+function create_table_nbt_categories_relationships_table()
 {
-	echo2( "Creating the nbt_categories_relationships table for new site '{$site->name}'..." );
-	$site->create_table_nbt_categories_relationships_table();
+	global $thissite;
+	echo2( "Creating the nbt_categories_relationships table for new site '{$thissite->name}'..." );
+	$thissite->create_table_nbt_categories_relationships_table();
 	echo2( "done.\n" );
 }
-function create_table_nbt_templates( $site )
+function create_table_nbt_templates()
 {
-	echo2( "Creating the nbt_templates table for new site '{$site->name}'..." );
-	$site->create_table_nbt_templates();
+	global $thissite;
+	echo2( "Creating the nbt_templates table for new site '{$thissite->name}'..." );
+	$thissite->create_table_nbt_templates();
 	echo2( "done.\n" );
 }
-function create_table_nbt_templates_categories( $site )
+function create_table_nbt_templates_categories()
 {
-	echo2( "Creating the nbt_templates table for new site '{$site->name}'..." );
-	$site->create_table_nbt_templates_categories();
+	global $thissite;
+	echo2( "Creating the nbt_templates table for new site '{$thissite->name}'..." );
+	$thissite->create_table_nbt_templates_categories();
 	echo2( "done.\n" );
 }
-function create_table_wiki_subscriptions( $site )
+function create_table_wiki_subscriptions()
 {
-	echo2( "Creating the wiki_subscriptions table for new site '{$site->name}'..." );
-	$site->create_table_wiki_subscriptions();
+	global $thissite;
+	echo2( "Creating the wiki_subscriptions table for new site '{$thissite->name}'..." );
+	$thissite->create_table_wiki_subscriptions();
 	echo2( "done.\n" );
 }
-function create_table_orghub_category( $site )
+function create_table_orghub_category()
 {
-	echo2( "Creating the orghub_category table for new site '{$site->name}'..." );
-	$site->create_table_orghub_category();
+	global $thissite;
+	echo2( "Creating the orghub_category table for new site '{$thissite->name}'..." );
+	$thissite->create_table_orghub_category();
 	echo2( "done.\n" );
 }
-function create_table_orghub_connections( $site )
+function create_table_orghub_connections()
 {
-	echo2( "Creating the orghub_connections table for new site '{$site->name}'..." );
-	$site->create_table_orghub_connections();
+	global $thissite;
+	echo2( "Creating the orghub_connections table for new site '{$thissite->name}'..." );
+	$thissite->create_table_orghub_connections();
 	echo2( "done.\n" );
 }
-function create_table_orghub_site( $site )
+function create_table_orghub_site()
 {
-	echo2( "Creating the orghub_site table for new site '{$site->name}'..." );
-	$site->create_table_orghub_site();
+	global $thissite;
+	echo2( "Creating the orghub_site table for new site '{$thissite->name}'..." );
+	$thissite->create_table_orghub_site();
 	echo2( "done.\n" );
 }
-function create_table_orghub_type( $site )
+function create_table_orghub_type()
 {
-	echo2( "Creating the orghub_type table for new site '{$site->name}'..." );
-	$site->create_table_orghub_type();
+	global $thissite;
+	echo2( "Creating the orghub_type table for new site '{$thissite->name}'..." );
+	$thissite->create_table_orghub_type();
 	echo2( "done.\n" );
 }
-function create_table_orghub_upload( $site )
+function create_table_orghub_upload()
 {
-	echo2( "Creating the orghub_upload table for new site '{$site->name}'..." );
-	$site->create_table_orghub_upload();
+	global $thissite;
+	echo2( "Creating the orghub_upload table for new site '{$thissite->name}'..." );
+	$thissite->create_table_orghub_upload();
 	echo2( "done.\n" );
 }
-function create_table_orghub_user( $site )
+function create_table_orghub_user()
 {
-	echo2( "Creating the orghub_user table for new site '{$site->name}'..." );
-	$site->create_table_orghub_user();
+	global $thissite;
+	echo2( "Creating the orghub_user table for new site '{$thissite->name}'..." );
+	$thissite->create_table_orghub_user();
 	echo2( "done.\n" );
 }
-function create_table_smackcsv_line_log( $site )
+function create_table_smackcsv_line_log()
 {
-	echo2( "Creating the smackcsv_line_log table for new site '{$site->name}'..." );
-	$site->create_table_smackcsv_line_log();
+	global $thissite;
+	echo2( "Creating the smackcsv_line_log table for new site '{$thissite->name}'..." );
+	$thissite->create_table_smackcsv_line_log();
 	echo2( "done.\n" );
 }
-function create_table_frm_forms( $site )
+function create_table_frm_forms()
 {
-	echo2( "Creating the frm_forms table(s) for new site '{$site->name}'..." );
-	$site->create_table_frm_forms();
+	global $thissite;
+	echo2( "Creating the frm_forms table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_frm_forms();
 	echo2( "done.\n" );
 }
-function create_table_frm_fields( $site )
+function create_table_frm_fields()
 {
-	echo2( "Creating the frm_fields table(s) for new site '{$site->name}'..." );
-	$site->create_table_frm_fields();
+	global $thissite;
+	echo2( "Creating the frm_fields table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_frm_fields();
 	echo2( "done.\n" );
 }
-function create_table_frm_items( $site )
+function create_table_frm_items()
 {
-	echo2( "Creating the frm_items table(s) for new site '{$site->name}'..." );
-	$site->create_table_frm_items();
+	global $thissite;
+	echo2( "Creating the frm_items table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_frm_items();
 	echo2( "done.\n" );
 }
-function create_table_frm_item_metas( $site )
+function create_table_frm_item_metas()
 {
-	echo2( "Creating the frm_item_metas table(s) for new site '{$site->name}'..." );
-	$site->create_table_frm_item_metas();
+	global $thissite;
+	echo2( "Creating the frm_item_metas table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_frm_item_metas();
 	echo2( "done.\n" );
 }
-function create_table_wpmm_subscribers( $site )
+function create_table_wpmm_subscribers()
 {
-	echo2( "Creating the wpmm_subscribers table(s) for new site '{$site->name}'..." );
-	$site->create_table_wpmm_subscribers();
+	global $thissite;
+	echo2( "Creating the wpmm_subscribers table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_wpmm_subscribers();
 	echo2( "done.\n" );
 }
-function create_table_ngg_album( $site )
+function create_table_ngg_album()
 {
-	echo2( "Creating the ngg_album table(s) for new site '{$site->name}'..." );
-	$site->create_table_ngg_album();
+	global $thissite;
+	echo2( "Creating the ngg_album table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_ngg_album();
 	echo2( "done.\n" );
 }
-function create_table_ngg_gallery( $site )
+function create_table_ngg_gallery()
 {
-	echo2( "Creating the ngg_gallery table(s) for new site '{$site->name}'..." );
-	$site->create_table_ngg_gallery();
+	global $thissite;
+	echo2( "Creating the ngg_gallery table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_ngg_gallery();
 	echo2( "done.\n" );
 }
-function create_table_ngg_pictures( $site )
+function create_table_ngg_pictures()
 {
-	echo2( "Creating the ngg_pictures table(s) for new site '{$site->name}'..." );
-	$site->create_table_ngg_pictures();
+	global $thissite;
+	echo2( "Creating the ngg_pictures table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_ngg_pictures();
 	echo2( "done.\n" );
 }
-function create_table_redirection_404( $site )
+function create_table_redirection_404()
 {
-	echo2( "Creating the redirection_404 table(s) for new site '{$site->name}'..." );
-	$site->create_table_redirection_404();
+	global $thissite;
+	echo2( "Creating the redirection_404 table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_redirection_404();
 	echo2( "done.\n" );
 }
-function create_table_redirection_groups( $site )
+function create_table_redirection_groups()
 {
-	echo2( "Creating the redirection_groups table(s) for new site '{$site->name}'..." );
-	$site->create_table_redirection_groups();
+	global $thissite;
+	echo2( "Creating the redirection_groups table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_redirection_groups();
 	echo2( "done.\n" );
 }
-function create_table_redirection_items( $site )
+function create_table_redirection_items()
 {
-	echo2( "Creating the redirection_items table(s) for new site '{$site->name}'..." );
-	$site->create_table_redirection_items();
+	global $thissite;
+	echo2( "Creating the redirection_items table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_redirection_items();
 	echo2( "done.\n" );
 }
-function create_table_redirection_logs( $site )
+function create_table_redirection_logs()
 {
-	echo2( "Creating the redirection_logs table(s) for new site '{$site->name}'..." );
-	$site->create_table_redirection_logs();
+	global $thissite;
+	echo2( "Creating the redirection_logs table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_redirection_logs();
 	echo2( "done.\n" );
 }
-function create_table_redirection_modules( $site )
+function create_table_redirection_modules()
 {
-	echo2( "Creating the redirection_modules table(s) for new site '{$site->name}'..." );
-	$site->create_table_redirection_modules();
+	global $thissite;
+	echo2( "Creating the redirection_modules table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_redirection_modules();
 	echo2( "done.\n" );
 }
-function copy_wp_files( $site )
+function copy_wp_files()
 {
-	echo2( "Copy WordPress files for new site '{$site->name}'..." );
-	$site->copy_wp_folder();
+	global $thissite;
+	echo2( "Copy WordPress files for new site '{$thissite->name}'..." );
+	$thissite->copy_wp_folder();
 	echo2( "done.\n" );
 }
-function copy_uploads_files( $site )
+function copy_uploads_files()
 {
-	echo2( "Copy WordPress files for new site '{$site->name}'..." );
-	$site->copy_uploads_folder();
+	global $thissite;
+	echo2( "Copy WordPress files for new site '{$thissite->name}'..." );
+	$thissite->copy_uploads_folder();
 	echo2( "done.\n" );
 }
 
