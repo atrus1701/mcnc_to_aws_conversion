@@ -6,9 +6,9 @@ class NewSite extends Site
 	public $blogs;
 	public $users;
 
-	public function __construct( $db, $name, $dbname, $dbprefix, $domain, $ipaddress, $path )
+	public function __construct( $db, $name, $dbname, $dbprefix, $domain, $ipaddress, $path, $username )
 	{
-		parent::__construct( $db, $name, $dbname, $dbprefix, $domain, $ipaddress, $path );
+		parent::__construct( $db, $name, $dbname, $dbprefix, $domain, $ipaddress, $path, $username );
 		$this->blogs = array();
 		$this->users = array();
 	}
@@ -38,8 +38,7 @@ class NewSite extends Site
 	}
 	public function assign_base_blog( $site )
 	{
-		$base_blog_info = $site->get_base_blog();
-		$this->base_blog = new Blog( $site, $base_blog_info );
+		$this->base_blog = $site->get_base_blog();
 		$this->base_blog->set_new_id( 1 );
 		$this->base_blog->set_new_domain( $this->domain );
 	}
@@ -201,7 +200,7 @@ class NewSite extends Site
 		$this->create_table( $claspages, $name, $table_name );
 		
 		$count = 0;
-		while( $rows = $claspages->get_table_row_list( $name, $count, 1000 ) )
+		while( $rows = $claspages->get_table_row_list( $claspages->add_prefix( $name ), $count, 1000 ) )
 		{
 			echo2( '.' );
 			
@@ -410,6 +409,9 @@ class NewSite extends Site
 						
 						$value = $blog_id;
 						break;
+					case 'source_domain':
+						$value = $this->domain;
+						break;
 				}
 				
 				$row = array(
@@ -456,7 +458,7 @@ class NewSite extends Site
 		foreach( array( $claspages, $pages ) as $site )
 		{
 			$count = 0;
-			while( $rows = $site->get_table_row_list( $name, $count, 1000 ) )
+			while( $rows = $site->get_table_row_list( $site->add_prefix( $name ), $count, 1000 ) )
 			{
 				echo2( '.' );
 			
@@ -487,7 +489,7 @@ class NewSite extends Site
 		foreach( array( $claspages, $pages ) as $site )
 		{
 			$count = 0;
-			while( $rows = $site->get_table_row_list( $name, $count, 1000 ) )
+			while( $rows = $site->get_table_row_list( $site->add_prefix( $name ), $count, 1000 ) )
 			{
 				echo2( '.' );
 			
@@ -543,7 +545,7 @@ class NewSite extends Site
 		
 		$table_name = $this->add_prefix( $np.$name );
 		if( ! $blog->old_site->table_exists( $blog->old_site->add_prefix( $op.$name ) ) ) {
-			echo2( "doesn't exist." );
+			echo2( "done.\n      Table does not exist." );
 			return;
 		}
 		
@@ -614,7 +616,7 @@ class NewSite extends Site
 		}
 		
 		if( ! $blog->old_site->table_exists( $blog->old_site->add_prefix( $op.$name ) ) ) {
-			echo2( "doesn't exist." );
+			echo2( "done.\n      Table does not exist." );
 			return;
 		}
 		
@@ -886,8 +888,6 @@ class NewSite extends Site
 	{
 		$this->create_table_for_all_blogs( 'redirection_modules' );
 	}
-
-	
 	protected function create_table_for_all_blogs( $name, $limit = 1000 )
 	{
 		foreach( array_merge( array( $this->base_blog ), $this->blogs ) as $blog ) {
@@ -911,7 +911,7 @@ class NewSite extends Site
 
 		$table_name = $this->add_prefix( $np.$name );
 		if( ! $blog->old_site->table_exists( $blog->old_site->add_prefix( $op.$name ) ) ) {
-			echo2( "doesn't exist." );
+			echo2( "done.\n      Table does not exist." );
 			return;
 		}
 		
@@ -920,7 +920,7 @@ class NewSite extends Site
 		$count = 0;
 		while( $rows = $blog->old_site->get_blog_table_row_list( $blog->old_id, $name, $count, $limit ) )
 		{
-			if( $count > 1 ) echo2( '.' );
+			if( $count > 0 ) echo2( '.' );
 			
 			foreach( $rows as $row )
 			{
