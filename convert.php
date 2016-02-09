@@ -27,7 +27,6 @@ function main()
 	global $db, $claspages, $pages, $thissite, 
 		$claspages_to_sites_slugs, $pages_to_sites_slugs;
 	
-	clear_log();
 	create_sites();
 	
 //----------------------------------------
@@ -687,6 +686,7 @@ function copy_uploads_files()
 //========================================================================================
 //============================================================================= MAIN =====
 
+clear_log();
 print_header( 'Convert database started' );
 
 extract($config);
