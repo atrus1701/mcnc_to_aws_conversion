@@ -29,28 +29,36 @@ function main()
 	
 	create_sites();
 	
-//----------------------------------------
-// Store blogs information
-//----------------------------------------
-
+	store_blogs_information();
+	store_users_information();
+	
+	populate_main_site_tables();
+	populate_main_blog_tables();
+	populate_plugin_site_tables();
+	populate_plugin_blog_tables();
+	
+	copy_files();
+	
+	disconnect_sites();
+}
+function store_blogs_information()
+{
+	global $claspages, $claspages_to_sites_slugs;
+	global $pages, $pages_to_sites_slugs;	
 	echo2( "\n" );
 	add_blogs_to_new_sites( $claspages, $claspages_to_sites_slugs );
 	add_blogs_to_new_sites( $pages, $pages_to_sites_slugs );
 	assign_new_blog_ids();
 	assign_base_blog();
-	
-//----------------------------------------
-// Store users information
-//----------------------------------------
-	
+}
+function store_users_information()
+{
 	echo2( "\n" );
 	assign_site_users();
 	assign_new_user_ids();
-
-//----------------------------------------
-// Main Site tables
-//----------------------------------------
-	
+}
+function populate_main_site_tables()
+{
 	echo2( "\n" );
 	create_table_site();
 	create_table_sitemeta();
@@ -61,11 +69,9 @@ function main()
 	create_table_blog_versions();
 	create_table_registration_log();
 	create_table_signups();
-
-//----------------------------------------
-// Main Blog tables
-//----------------------------------------
-
+}
+function populate_main_blog_tables()
+{
 	echo2( "\n" );
 	create_table_options();
 	create_table_posts();
@@ -77,11 +83,9 @@ function main()
 	create_table_term_taxonomy();
 	create_table_term_relationships();
 	create_table_termmeta();
-
-//----------------------------------------
-// Plugin Site tables
-//----------------------------------------
-
+}
+function populate_plugin_site_tables()
+{
 	echo2( "\n" );
 	create_table_batch_create_table_queue();
 	create_table_batch_create_table_queuemeta();
@@ -113,15 +117,13 @@ function main()
 	create_table_orghub_upload();
 	create_table_orghub_user();
 
-// 	echo2( "\n" );
-//  Don't copy...
+	echo2( "\n" );
+//	Don't copy...
 //	create_table_smackcsv_line_log();
 //	create_table_smackcsv_pie_log();
-
-//----------------------------------------
-// Plugin Blog tables
-//----------------------------------------
-	
+}
+function populate_plugin_blog_tables()
+{
 	echo2( "\n" );
 	create_table_frm_forms();
 	create_table_frm_fields();
@@ -142,19 +144,15 @@ function main()
 	create_table_redirection_items();
 	create_table_redirection_logs();
 	create_table_redirection_modules();
-
-//----------------------------------------
-// Copy files
-//----------------------------------------
-	
+function copy_files()
+{
 	echo2( "\n" );
 	copy_wp_files();
 	
 	echo2( "\n" );
 	copy_uploads_files();
-
+	
 	echo2( "\n" );
-	disconnect_sites();
 }
 function clear_log()
 {
@@ -214,6 +212,7 @@ function create_sites()
 function disconnect_sites()
 {
 	global $db, $claspages, $pages, $thissite;
+	echo2( "\n" );
 	echo2( "Disconnecting sites..." );
 	
 	$db->disconnect();
@@ -226,14 +225,14 @@ function disconnect_sites()
 function add_blogs_to_new_sites( $site, $to_sites_slugs )
 {
 	global $thissite;
-	echo2( "Add blogs from old site '{$thissite->name}'..." );
+	echo2( "Add blogs from old site '{$site->name}'..." );
 	
-	$blogs = $thissite->get_blogs();
+	$blogs = $site->get_blogs();
 	foreach( $blogs as $blog )
 	{
 		$slug = trim( $blog['path'], '/' );
 		if( $slug == '' ) {
-			$thissite->add_base_blog( $blog );
+			$site->add_base_blog( $blog );
 			continue;
 		}
 	
