@@ -23,6 +23,11 @@ class NewSite extends Site
 		}
 		elseif( $old_site->is_multidomain_blog( $blog_info['blog_id'] ) ) {
 			$blog->set_domain_type( 'multi' );
+			$blog->set_new_domain( $blog->old_domain );
+		}
+		else {
+			$blog->set_domain_type( 'default' );
+			$blog->set_new_domain( $blog->old_domain );
 		}
 		
 		$this->blogs[] = $blog;
@@ -34,6 +39,22 @@ class NewSite extends Site
 		{
 			$blog->set_new_id( $count );
 			$count++;
+		}
+	}
+	public function assign_blog_uploads_urls()
+	{
+		foreach( $this->blogs as &$blog )
+		{
+			$old_file_uploads_path = $blog->old_site->get_option( $blog->old_id, 'fileupload_url' );			
+			if( ! $old_file_uploads_path ) {
+				$old_file_uploads_path = "{$blog->old_domain}{$blog->db_row['path']}wp-content/uploads/sites/{$blog->old_id}";
+			} else {
+				$old_file_uploads_path = str_replace( 'http://', '', $old_file_uploads_path );
+				$old_file_uploads_path = str_replace( 'https://', '', $old_file_uploads_path );
+			}
+			$new_file_uploads_path = "{$blog->new_domain}{$blog->db_row['path']}wp-content/uploads/sites/{$blog->new_id}";
+
+			$blog->set_file_upload_paths( $old_file_uploads_path, $new_file_uploads_path );
 		}
 	}
 	public function assign_base_blog( $site )
@@ -146,6 +167,15 @@ class NewSite extends Site
 		}
 		
 		return FALSE;
+	}
+	public function get_file_uploads_paths()
+	{
+		$uploads_paths = array();
+		foreach( $this->blogs as $blog )
+		{
+			$uploads_paths[ $blog->old_file_upload_path ] = $blog->new_file_upload_path;
+		}
+		return $uploads_paths;
 	}
 	public function create_table( $site, $name, $table_name )
 	{
@@ -522,7 +552,13 @@ class NewSite extends Site
 	{
 		global $db, $claspages, $pages;
 		
-		foreach( array_merge( array( $this->base_blog ), $this->blogs ) as $blog )
+		$this->create_table_options_for_blog( $this->base_blog );
+
+		echo2( "\n   Inserting / updating 'ms_files_rewriting' in options table for blog {$this->name}.{$blog->new_id} from {$blog->old_site->name}.{$blog->old_id}..." );
+		$this->add_option( 1, 'ms_files_rewriting', '0' );
+		echo2( "done." );
+		
+		foreach( $this->blogs as $blog )
 		{
 			$this->create_table_options_for_blog( $blog );
 		}
@@ -567,7 +603,13 @@ class NewSite extends Site
 						}
 						break;
 					case 'upload_path':
-						$row['option_value'] = "wp-content/uploads/{$blog->new_id}/files";
+						$row['option_value'] = "wp-content/uploads";
+						break;
+					case 'upload_url_path':
+						$row['option_value'] = '';
+						break;
+					case 'fileupload_url':
+						continue;
 						break;
 					case 'recently_edited':
 						$v = unserialize( $row['option_value'] );
@@ -662,7 +704,7 @@ class NewSite extends Site
 	}
 	public function create_table_term_taxonomy()
 	{
-		$this->create_table_for_all_blogs( 'term_relationships' );
+		$this->create_table_for_all_blogs( 'term_taxonomy' );
 	}
 	public function create_table_term_relationships()
 	{
@@ -932,48 +974,412 @@ class NewSite extends Site
 		
 		echo2( "done." );
 	}
+	public function find_and_replace_file_uploads_path()
+	{
+		foreach( $this->blogs as $blog ) {
+			$this->find_and_replace_file_uploads_path_for_blog( $blog );
+		}
+		
+		echo2( "\n" );
+	}
+	protected function find_and_replace_file_uploads_path_for_blog( $blog, $limit = 1000 )
+	{
+		echo2( "\n   Find and replace for {$this->name} blog {$blog->new_id}..." );
+		
+		$this->find_and_replace( $blog->old_file_upload_path, $blog->new_file_upload_path, $limit );
+		
+		echo2( "done." );
+	}
+	public function find_and_replace( $find_and_replace, $exclude_find_and_replace, $limit = 1000 )
+	{
+		$table_names = $this->db->get_table_list( $this->dbname );
+		$total_tables = count( $table_names );
+		$total_tables_strlen = strlen( '' . $total_tables );
+		$i = 1;
+		foreach( $table_names as $table_name )
+		{
+			$n = str_pad( $i, $total_tables_strlen, '0', STR_PAD_LEFT );
+			echo2( "\n   $n of $total_tables:" );
+			$this->find_and_replace_in_table( $table_name, $find_and_replace, $exclude_find_and_replace, $limit );
+			$i++;
+		}
+	}
+	protected function find_and_replace_in_table( $table_name, $find_and_replace, $exclude_find_and_replace, $limit = 1000 )
+	{
+		echo2( "\n   Find and replace for new site '{$this->name}' table '{$table_name}'..." );
+		
+		$exclude_columns = array();
+		if( array_key_exists( $table_name, $exclude_find_and_replace ) ) {
+			if( $exclude_find_and_replace[ $table_name ] === 0 ) {
+				echo2( "done.\n      Table is being excluded." );
+				return;
+			} elseif( is_array( $exclude_find_and_replace[ $table_name ] ) ) {
+				$exclude_columns = $exclude_find_and_replace[ $table_name ];
+			}
+		} else {
+			$remove_prefix_table_name = $this->remove_table_prefix( $table_name );
+			if( array_key_exists( $remove_prefix_table_name, $exclude_find_and_replace ) ) {
+				if( $exclude_find_and_replace[ $remove_prefix_table_name ] === 0 ) {
+					echo2( "done.\n      Table is being excluded." );
+					return;
+				} elseif( is_array( $exclude_find_and_replace[ $remove_prefix_table_name ] ) ) {
+					$exclude_columns = $exclude_find_and_replace[ $remove_prefix_table_name ];
+				}
+			}
+		}
+		
+		echo2( "\n      Exclude columns: " );
+		if( count( $exclude_columns ) === 0 ) {
+			echo2( "none\n   " );
+		}
+		else {
+			echo2( implode( ', ', $exclude_columns ) . "\n   " );
+		}
+		
+		if( ! $this->table_exists( $table_name ) ) {
+			echo2( "error.\n      Table doesn't exist." );
+			return;
+		}
+		
+		$count = 0;
+		while( $rows = $this->get_table_row_list( $table_name, $count, $limit ) )
+		{
+			if( $count > 0 ) echo2( '.' );
+			
+			foreach( $rows as $row )
+			{
+				$needs_replacement = FALSE;
+				$this->find_and_replace_row( $find_and_replace, $exclude_columns, $row, $needs_replacement );
+				
+				if( $needs_replacement )
+				{
+					$this->update_row( $table_name, $row );
+				}
+			}
+			
+			$count++;
+		}
+		echo2( "done." );
+	}
+	protected function find_and_replace_row( $find_and_replace, $exclude_columns, &$row, &$needs_replacement )
+	{
+		$needs_replacement = FALSE;
+		
+		foreach( $row as $column_name => &$column_value )
+		{
+			if( in_array( $column_name, $exclude_columns ) ) {
+				continue;
+			}
+			
+			$is_changed = FALSE;
+			$this->find_and_replace_value( $find_and_replace, $column_value, $is_changed );
+			
+			if( $is_changed ) {
+				$needs_replacement = TRUE;
+			}
+		}
+	}
+	protected function find_and_replace_value( $find_and_replace, &$value, &$is_changed )
+	{
+		if( is_array( $value ) || is_object( $value ) )
+		{
+			$this->find_and_replace_object( $find_and_replace, $value, $is_changed );
+		}
+		elseif( is_string( $value ) )
+		{
+			if( $this->is_value_serialized( $value ) )
+			{
+				$this->find_and_replace_serialized_data( $find_and_replace, $value, $is_changed );
+			}
+			else
+			{
+				$this->find_and_replace_string( $find_and_replace, $value, $is_changed );
+			}
+		}
+		else
+		{
+			$this->find_and_replace_other( $find_and_replace, $value, $is_changed );
+		}
+	}
+	protected function find_and_replace_serialized_data( $find_and_replace, &$value, &$is_changed )
+	{
+		$serialized_data = @unserialize( $value );
+	
+		if( is_array( $serialized_data ) || is_object( $serialized_data ) )
+		{
+			$this->find_and_replace_value( $find_and_replace, &$serialized_data, $is_changed );
+			$value = serialize( $serialized_data );
+			return;
+		}
+	
+		if( is_a( $serialized_data, '__PHP_Incomplete_Class' ) )
+		{
+			$serialized_array = array();
+			foreach( $serialized_data as $k => &$v )
+			{
+				$serialized_array[ $k ] = $v;
+			}
+		
+			$class_name = $serialized_array['__PHP_Incomplete_Class_Name'];
+			unset( $serialized_array['__PHP_Incomplete_Class_Name'] );
+		
+			$this->find_and_replace_value( $find_and_replace, $serialized_array, $is_changed );
+		
+			$serialized_class_data = substr( serialize( $serialized_array ), 1 );
+			$value = 'O:' . count( $class_name ) . ':"' . $class_name . '"' . $serialized_class_data;
+			return;
+		}
+	}	
+	protected function find_and_replace_object( $find_and_replace, &$value, &$is_changed )
+	{
+		foreach( $value as $k => &$v )
+		{
+			$this->find_and_replace_value( $find_and_replace, $v, $is_changed );
+		}
+	}
+	protected function find_and_replace_string( $find_and_replace, &$value, &$is_changed )
+	{
+		foreach( $find_and_replace as $find => $replace )
+		{
+			if( FALSE !== strpos( $value, $find ) )
+			{
+				$value = str_replace( $find, $replace, $value );
+				$is_changed = TRUE;
+			}
+		}
+	}
+	protected function find_and_replace_other( $find_and_replace, &$value, &$is_changed )
+	{
+		foreach( $find_and_replace as $find => $replace )
+		{
+			if( $find === $value )
+			{
+				$value = $replace;
+				$is_changed = TRUE;
+			}
+		}
+	}
+	protected function is_value_serialized( $data, $strict = true )
+	{
+		// if it isn't a string, it isn't serialized.
+		if ( ! is_string( $data ) ) {
+			return false;
+		}
+		$data = trim( $data );
+		if ( 'N;' == $data ) {
+			return true;
+		}
+		if ( strlen( $data ) < 4 ) {
+			return false;
+		}
+		if ( ':' !== $data[1] ) {
+			return false;
+		}
+		if ( $strict ) {
+			$lastc = substr( $data, -1 );
+			if ( ';' !== $lastc && '}' !== $lastc ) {
+				return false;
+			}
+		} else {
+			$semicolon = strpos( $data, ';' );
+			$brace     = strpos( $data, '}' );
+			// Either ; or } must exist.
+			if ( false === $semicolon && false === $brace )
+				return false;
+			// But neither must be in the first X characters.
+			if ( false !== $semicolon && $semicolon < 3 )
+				return false;
+			if ( false !== $brace && $brace < 4 )
+				return false;
+		}
+		$token = $data[0];
+		switch ( $token ) {
+			case 's' :
+				if ( $strict ) {
+					if ( '"' !== substr( $data, -2, 1 ) ) {
+						return false;
+					}
+				} elseif ( false === strpos( $data, '"' ) ) {
+					return false;
+				}
+				// or else fall through
+			case 'a' :
+			case 'O' :
+				return (bool) preg_match( "/^{$token}:[0-9]+:/s", $data );
+			case 'b' :
+			case 'i' :
+			case 'd' :
+				$end = $strict ? '$' : '';
+				return (bool) preg_match( "/^{$token}:[0-9.E-]+;$end/", $data );
+		}
+		return false;
+	}
+	function update_row( $table_name, $row )
+	{
+		$primary_key = $this->db->get_table_primary_key( $this->dbname, $table_name );
+		
+		if( empty( $row[ $primary_key ] ) ) {
+			return;
+		}
+		
+		$primary_value = $row[$primary_key];
+		unset( $row[$primary_key] );
+		
+		$fields = array();
+		foreach( $row as $column_name => &$value )
+		{
+			$v = $value;
+			if( is_null($value) )
+				$v = 'NULL';
+			elseif( true === $value )
+				$v = 'true';
+			elseif( false === $value )
+				$v = 'false';
+			elseif( $this->db->is_numeric_column( $this->dbname, $table_name, $column_name ) )
+				$v = $value;
+			else
+				$v = $this->dbconnection->quote( $value );
+		
+			$fields[] = "`$column_name`=$v";
+		}
+	
+		if( ! $this->db->is_numeric_column( $this->dbname, $table_name, $primary_key ) ) {
+			$primary_value = $this->dbconnection->quote( $primary_value );
+		}
+		
+		$primary_field = "`$primary_key`=$primary_value";
+		
+		$update_sql = "UPDATE `$table_name` SET " . implode( ',', $fields ) . " WHERE $primary_field;";
+		
+		try
+		{
+			$data = $this->dbconnection->query( $update_sql );
+		}
+		catch( PDOException $e )
+		{
+			// DIE???
+		}
+	}
 	public function copy_wp_folder()
 	{
 		global $claspages, $pages;
 		
 		$exclude_files = '--exclude wp-config.php --exclude=.git --exclude=error_log';
-		if( !$copy_all )
-		{
-			$exclude_files .= ' --exclude=wp-content/blogs.dir --exclude=wp-content/uploads';
-		}
-	
-		passthru( "rsync -az $exclude_files '{$claspages->path}/'  '{{$this->path}/'" );
+		$exclude_files .= ' --exclude=wp-content/blogs.dir --exclude=wp-content/uploads';
+		
+		passthru( "rsync -az $exclude_files '{$claspages->path}/'  '{$this->path}/'" );
 		passthru( "rsync -az $exclude_files '{$pages->path}/'  '{$this->path}/'" );
 	}
 	public function copy_uploads_folder()
 	{
-		foreach( array_merge( array( $this->base_blog ), $this->blogs ) as $blog ) {
+		// base blog
+		echo2( "\n   Copy base blog extra upload files..." );
+		passthru( "rsync -az --exclude sites '{$this->base_blog->old_site->path}/wp-content/uploads/'  '{$this->path}/wp-content/uploads/'" );
+		echo2( "done." );
+		$this->copy_base_uploads_folder( $this->base_blog );
+		
+		// all other blogs
+		foreach( $this->blogs as $blog ) {
 			$this->copy_uploads_folder_for_blog( $blog );
 		}
 		
 		echo2( "\n" );
 	}
+	protected function copy_base_uploads_folder( $blog )
+	{
+		echo2( "\n   Copy uploads folder for {$this->name} blog {$blog->new_id} from {$blog->old_site->name} blog {$blog->old_id}..." );
+
+		$old_upload_path = $blog->old_site->get_option( $blog->old_id, 'upload_path' );
+		$new_upload_path = $this->get_option( $blog->new_id, 'upload_path' );
+		
+		if( $old_upload_path )
+		{
+			if( FALSE === strpos( $old_upload_path, '/1/' ) )
+			{
+				echo2( "error.\n     No base blog upload path." );
+				return;
+			}
+
+			if( ! file_exists( "{$this->base_blog->old_site->path}/{$old_upload_path}" ) )
+			{
+				echo2( "error.\n      Cannot find old upload path: {$this->base_blog->old_site->path}/{$old_upload_path}" );
+				return;
+			}
+		}
+		if( ! $new_upload_path )
+		{
+			echo2( "error.\n      No new upload path." );
+			return;
+		}
+		if( ! file_exists( "{$this->path}/{$new_upload_path}" ) )
+		{
+			exec( "mkdir -p {$this->path}/{$new_upload_path}" );
+			if( ! file_exists( "{$this->path}/{$new_upload_path}" ) )
+			{
+				echo2("error.\n      Unable to create new upload path: {$this->path}/{$new_upload_path}" );
+				return;
+			}
+		}
+		
+		passthru( "rsync -az '{$blog->old_site->path}/{$old_upload_path}'  '{$this->path}/{$new_upload_path}'" );
+		
+		echo2( "done." );
+	}
 	protected function copy_uploads_folder_for_blog( $blog )
 	{
 		echo2( "\n   Copy uploads folder for {$this->name} blog {$blog->new_id} from {$blog->old_site->name} blog {$blog->old_id}..." );
 		
-		$old_uploads_path = $blog->old_site->get_option( $blog->old_id, 'uploads_path' );
-		$new_uploads_path = $this->get_option( $blog->new_id, 'uploads_path' );
+		$old_upload_path = $blog->old_site->get_option( $blog->old_id, 'upload_path' );
+		$new_upload_path = $this->get_option( $blog->new_id, 'upload_path' );
 		
-		if( ! $old_uploads_path )
+		$count = 0;
+		$possible_old_upload_paths = array(
+			"wp-content/uploads/sites/{$blog->old_id}",
+			"wp-content/blogs.dir/{$blog->old_id}",
+		);
+		
+		while( ! $old_upload_path )
 		{
-			echo2( "no old uploads path." );
-			return;
-		}
-		if( ! $new_uploads_path )
-		{
-			echo2( "no new uploads path." );
-			return;
+			if( $count >= count( $possible_old_upload_paths ) )
+			{
+				echo2( "error.\n      No possible old upload path found." );
+				return;
+			}
+			
+			$old_upload_path = $possible_old_upload_paths[ $count ];
+			$count++;
+			
+			if( ! file_exists( "{$blog->old_site->path}/{$old_upload_path}" ) ) {
+				$old_upload_path = NULL;
+			}
 		}
 		
-		passthru( "rsync -az '{$blog->old_site->path}/{$old_uploads_path}'  '{$this->path}/{$new_uploads_path}'" );
+		if( ! $new_upload_path )
+		{
+			$new_upload_path = "wp-content/uploads/sites/{$blog->new_id}";
+		}
+		if( ! file_exists( "{$this->path}/{$new_upload_path}" ) )
+		{
+			exec( "mkdir -p {$this->path}/{$new_upload_path}" );
+			if( ! file_exists( "{$this->path}/{$new_upload_path}" ) )
+			{
+				echo2("error.\n      Unable to create new upload path: {$this->path}/{$new_upload_path}." );
+				return;
+			}
+		}
+		
+		passthru( "rsync -az '{$blog->old_site->path}/{$old_upload_path}'  '{$this->path}/{$new_upload_path}'" );
 		
 		echo2( "done." );
-	}	
+	}
+	public function set_permisions()
+	{
+		echo2( "\n   Set owner to apache:www..." );
+		passthru( "chown -R apache:www {$this->path}" );
+		echo2( "done." );
+		echo2( "\n   Set permission to 2775..." );
+		passthru( "chmod -R 2775 {$this->path}" );
+		echo2( "done." );
+	}
 }
 

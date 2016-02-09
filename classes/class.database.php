@@ -82,5 +82,44 @@ class Database
 
 		return $table_exists;
 	}
+	public function get_table_list( $dbname )
+	{
+		$select_sql = "SELECT TABLE_NAME FROM `tables` WHERE TABLE_SCHEMA = '{$dbname}';";
+	
+		try
+		{
+			$data = $this->dbconnection->query( $select_sql );
+		}
+		catch( PDOException $e )
+		{
+			script_die( "Unable to determine if table `{$dbname}`.`{$table_name}`.", "SELECT 1 FROM `tables` WHERE TABLE_SCHEMA = '{$dbname}' AND TABLE_NAME = '{$table_name}';", $e->getMessage() );
+		}
+		
+		$table_names = array();
+		while( $row = $data->fetch( PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT ) )
+		{
+			$table_names[] = $row['TABLE_NAME'];
+		}
+		$data = null;
+
+		return $table_names;
+	}
+	public function get_table_primary_key( $dbname, $table_name )
+	{
+		$column_name = NULL;
+		$select_sql = "SELECT `COLUMN_NAME` FROM `information_schema`.`COLUMNS` WHERE (`TABLE_SCHEMA`='$dbname') AND (`TABLE_NAME`='$table_name') AND (`COLUMN_KEY`='PRI')";
+		
+		try
+		{
+			$primary_key = $this->dbconnection->query( $select_sql );
+			$column_name = $primary_key->fetchColumn( 0 );
+		}
+		catch( PDOException $e )
+		{
+			script_die( 'Unable to retrieve the primary key for table "'.$table_name.'".', "SELECT `COLUMN_NAME` FROM `COLUMNS` WHERE (`TABLE_SCHEMA`='$dbname') AND (`TABLE_NAME`='$table_name') AND (`COLUMN_KEY`='PRI')", $e->getMessage() );
+		}
+	
+		return $column_name;
+	}
 }
 

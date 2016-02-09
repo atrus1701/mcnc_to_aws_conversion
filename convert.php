@@ -37,6 +37,8 @@ function main()
 	populate_plugin_site_tables();
 	populate_plugin_blog_tables();
 	
+	find_and_replace();
+	
 	copy_files();
 	
 	disconnect_sites();
@@ -49,6 +51,7 @@ function store_blogs_information()
 	add_blogs_to_new_sites( $claspages, $claspages_to_sites_slugs );
 	add_blogs_to_new_sites( $pages, $pages_to_sites_slugs );
 	assign_new_blog_ids();
+	assign_blog_uploads_urls();
 	assign_base_blog();
 }
 function store_users_information()
@@ -144,6 +147,22 @@ function populate_plugin_blog_tables()
 	create_table_redirection_items();
 	create_table_redirection_logs();
 	create_table_redirection_modules();
+}
+function find_and_replace()
+{
+	global $thissite, $find_and_replace, $exclude_find_and_replace;
+	echo2( "\n" );
+	echo2( "Find and replace for new site '{$thissite->name}'..." );
+	$far = array_merge(
+		$thissite->get_file_uploads_paths(),
+		$find_and_replace
+	);
+	foreach( $far as $find => $replace ) {
+		echo2( "\n   Find '{$find}' and replace with '{$replace}'." );
+	}
+	$thissite->find_and_replace( $far, $exclude_find_and_replace );
+	echo2( "done.\n" );
+}
 function copy_files()
 {
 	echo2( "\n" );
@@ -153,6 +172,7 @@ function copy_files()
 	copy_uploads_files();
 	
 	echo2( "\n" );
+	set_permisions();
 }
 function clear_log()
 {
@@ -255,6 +275,13 @@ function assign_new_blog_ids()
 	global $thissite;
 	echo2( "Assigning new blog ids for new site '{$thissite->name}'..." );
 	$thissite->assign_new_blog_ids();
+	echo2( "done.\n" );
+}
+function assign_blog_uploads_urls()
+{
+	global $thissite;
+	echo2( "Assigning uploads urls for new site '{$thissite->name}'..." );
+	$thissite->assign_blog_uploads_urls();
 	echo2( "done.\n" );
 }
 function assign_blog_tables()
@@ -666,6 +693,13 @@ function create_table_redirection_modules()
 	$thissite->create_table_redirection_modules();
 	echo2( "done.\n" );
 }
+function find_and_replace_file_uploads_path()
+{
+	global $thissite;
+	echo2( "Find and replace file uploads path for new site '{$thissite->name}'..." );
+	$thissite->find_and_replace_file_uploads_path();
+	echo2( "done.\n" );
+}
 function copy_wp_files()
 {
 	global $thissite;
@@ -678,6 +712,13 @@ function copy_uploads_files()
 	global $thissite;
 	echo2( "Copy WordPress files for new site '{$thissite->name}'..." );
 	$thissite->copy_uploads_folder();
+	echo2( "done.\n" );
+}
+function set_permisions()
+{
+	global $thissite;
+	echo2( "Set the permissions for the new site '{$thissite->name}'..." );
+	$thissite->set_permisions();
 	echo2( "done.\n" );
 }
 

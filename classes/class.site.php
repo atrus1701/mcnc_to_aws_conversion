@@ -176,6 +176,11 @@ class Site
 	public function get_admin_user()
 	{
 		$users_table_name = $this->add_prefix( 'users' );
+		
+		if( ! $this->table_exists( $users_table_name ) ) {
+			return NULL;
+		}
+		
 		$select_sql = "SELECT `ID`,`user_login`,`user_pass`,`user_nicename`,`user_email`,`user_url`,`user_registered`,`user_activation_key`,`user_status`,`display_name`,`spam`,`deleted` FROM `{$users_table_name}` WHERE `ID`=1;";
 
 		try
@@ -191,7 +196,7 @@ class Site
 			return $data->fetch( PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT );
 		}
 		
-		return false;
+		return NULL;
 	}
 	public function get_users( $blog_id )
 	{
@@ -201,6 +206,11 @@ class Site
 		$users_table_name = $this->add_prefix( 'users' );
 		$usermeta_table_name = $this->add_prefix( 'usermeta' );
 		$blog_table_prefix = $this->add_prefix( $blog_id.'_' );
+		
+		if( ! $this->table_exists( $users_table_name ) || ! $this->table_exists( $usermeta_table_name ) ) {
+			return NULL;
+		}
+
 		$select_sql = "SELECT `ID`,`user_login`,`user_pass`,`user_nicename`,`user_email`,`user_url`,`user_registered`,`user_activation_key`,`user_status`,`display_name`,`spam`,`deleted` FROM `{$users_table_name}` LEFT JOIN `{$usermeta_table_name}` ON `{$users_table_name}`.`ID`=`{$usermeta_table_name}`.`user_id` WHERE `{$usermeta_table_name}`.`meta_key` LIKE '{$blog_table_prefix}%';";
 		
 		try
@@ -217,6 +227,11 @@ class Site
 	public function get_usermeta( $user_id )
 	{
 		$usermeta_table_name = $this->add_prefix( 'usermeta' );
+		
+		if( ! $this->table_exists( $usermeta_table_name ) ) {
+			return NULL;
+		}
+		
 		$select_sql = "SELECT `meta_key` AS `key`, `meta_value` AS `value` FROM `{$usermeta_table_name}` WHERE `user_id`={$user_id};";
 		
 		try
@@ -237,7 +252,12 @@ class Site
 			$p = "{$blog_id}_";
 		}
 		$options_table_name = $this->add_prefix( $p.'options' );
-		$select_sql = "SELECT `option_value` AS `value` FROM `{$options_table_name}` WHERE `option_name`={$key};";
+		
+		if( ! $this->table_exists( $options_table_name ) ) {
+			return NULL;
+		}
+		
+		$select_sql = "SELECT `option_value` AS `value` FROM `{$options_table_name}` WHERE `option_name`='{$key}';";
 		
 		try
 		{
@@ -245,7 +265,7 @@ class Site
 		}
 		catch( PDOException $e )
 		{
-			script_die( "Unable to get option for blog '{$blog_id}'.", "SELECT `option_value` AS `value` FROM `{$options_table_name}` WHERE `option_name`={$key};", $e->getMessage() );
+			script_die( "Unable to get option for blog '{$blog_id}'.", "SELECT `option_value` AS `value` FROM `{$options_table_name}` WHERE `option_name`='{$key}';", $e->getMessage() );
 		}
 		
 		if( $data->rowCount() > 0 ) {
@@ -254,6 +274,158 @@ class Site
 		}
 		
 		return NULL;
+	}
+	public function add_option( $blog_id, $key, $value )
+	{
+		$p = '';
+		if( $blog_id > 1 ) {
+			$p = "{$blog_id}_";
+		}
+		$options_table_name = $this->add_prefix( $p.'options' );
+		
+		if( ! $this->table_exists( $options_table_name ) ) {
+			return;
+		}
+		
+		$insert_sql = "INSERT INTO `{$options_table_name}` (`option_name`,`option_value`) VALUES ('{$key}','{$value}') ON DUPLICATE KEY UPDATE `option_name`='{$key}',`option_value`='{$value}';";
+		
+		try
+		{
+			$data = $this->dbconnection->query( $insert_sql );
+		}
+		catch( PDOException $e )
+		{
+			script_die( "Unable to insert option '{$key}' for blog '{$blog_id}'.", "INSERT INTO `{$options_table_name}` (`option_name`,`option_value`) VALUES ('{$key}','{$value}') ON DUPLICATE KEY UPDATE `option_name`='{$key}',`option_value`='{$value}';", $e->getMessage() );
+		}
+	}
+	public function get_table_rows( $table_name )
+	{
+		$table_name = $this->add_prefix( $table_name );
+		
+		try
+		{
+			$data = $this->dbconnection->query( "SELECT * FROM `{$table_name}`" );
+		}
+		catch( PDOException $e )
+		{
+			script_die( "Unable to get '{$this->name}' '{$table_name}' data.", "SELECT * FROM `{$table_name}`", $e->getMessage() );
+		}
+		
+		return $data->fetchAll( PDO::FETCH_ASSOC );
+	}
+	public function get_blog_table_rows( $blog_id, $table_name )
+	{
+		$p = '';
+		if( $blog_id > 1 ) {
+			$p = "{$blog_id}_";
+		}
+		
+		$table_name = $this->add_prefix( $p.$table_name );
+		
+		try
+		{
+			$data = $this->dbconnection->query( "SELECT * FROM `{$table_name}`" );
+		}
+		catch( PDOException $e )
+		{
+			script_die( "Unable to get '{$this->name}' '{$table_name}' data.", "SELECT * FROM `{$table_name}`", $e->getMessage() );
+		}
+		
+		return $data->fetchAll( PDO::FETCH_ASSOC );
+	}
+	public function get_blog_table_row( $blog_id, $table_name, $row_count )
+	{
+		$p = '';
+		if( $blog_id > 1 ) {
+			$p = "{$blog_id}_";
+		}
+		
+		$table_name = $this->add_prefix( $p.$table_name );
+		
+		try
+		{
+			$data = $this->dbconnection->query( "SELECT * FROM `{$table_name}` LIMIT 1 OFFSET {$row_count}" );
+		}
+		catch( PDOException $e )
+		{
+			script_die( "Unable to get '{$this->name}' '{$table_name}' data.", "SELECT * FROM `{$table_name}` LIMIT 1 OFFSET {$row_count}", $e->getMessage() );
+		}
+		
+		if( $data->rowCount() > 0 ) {
+			return $data->fetch( PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT );
+		}
+		
+		return NULL;
+	}
+	public function get_table_row( $table_name, $row_count )
+	{
+		$table_name = $this->add_prefix( $table_name );
+		
+		try
+		{
+			$data = $this->dbconnection->query( "SELECT * FROM `{$table_name}` LIMIT 1 OFFSET {$row_count}" );
+		}
+		catch( PDOException $e )
+		{
+			script_die( "Unable to get '{$this->name}' '{$table_name}' data.", "SELECT * FROM `{$table_name}` LIMIT 1 OFFSET {$row_count}", $e->getMessage() );
+		}
+		
+		if( $data->rowCount() > 0 ) {
+			return $data->fetch( PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT );
+		}
+		
+		return NULL;
+	}
+	public function get_blog_table_row_list( $blog_id, $table_name, $row_count, $limit = 1000 )
+	{
+		$p = '';
+		if( $blog_id > 1 ) {
+			$p = "{$blog_id}_";
+		}
+		$table_name = $this->add_prefix( $p.$table_name );
+		
+		return $this->get_table_row_list( $table_name, $row_count, $limit );
+	}
+	public function get_table_row_list( $table_name, $row_count, $limit = 1000 )
+	{
+		$offset = $row_count * $limit;
+		
+		try
+		{
+			$data = $this->dbconnection->query( "SELECT * FROM `{$table_name}` LIMIT {$limit} OFFSET {$offset}" );
+		}
+		catch( PDOException $e )
+		{
+			script_die( "Unable to get '{$this->name}' '{$table_name}' data.", "SELECT * FROM `{$table_name}` LIMIT {$limit} OFFSET {$offset}", $e->getMessage() );
+		}
+		
+		if( $data->rowCount() > 0 ) {
+			return $data->fetchAll( PDO::FETCH_ASSOC );
+		}
+		
+		return NULL;
+	}
+	public function remove_table_prefix( $table_name )
+	{
+		$new_table_name = $table_name;
+	
+		if( strpos( $table_name, $this->dbprefix ) === 0 )
+		{
+			$new_table_name = substr( $new_table_name, strlen( $this->dbprefix ) );
+		
+			$next_underscore_index = strpos( $new_table_name, '_' );
+			if( FALSE !== $next_underscore_index ) {
+			
+				$possible_blog_id = substr( $new_table_name, 0, $next_underscore_index - 1 );
+		
+				if( is_numeric( $possible_blog_id ) ) {
+					$new_table_name = substr( $new_table_name, strlen( $possible_blog_id ) + 2 );
+				}
+			
+			}
+		}
+	
+		return $new_table_name;
 	}
 }
 
