@@ -1327,10 +1327,11 @@ class NewSite extends Site
 	}
 	protected function copy_uploads_folder_for_blog( $blog )
 	{
+		global $temp_directory;
 		echo2( "\n   Copy uploads folder for {$this->name} blog {$blog->new_id} from {$blog->old_site->name} blog {$blog->old_id}..." );
 		
 		$old_upload_path = $blog->old_site->get_option( $blog->old_id, 'upload_path' );
-		$new_upload_path = $this->get_option( $blog->new_id, 'upload_path' );
+		$new_upload_path = "wp-content/uploads/sites/{$blog->new_id}";
 		
 		$count = 0;
 		$possible_old_upload_paths = array(
@@ -1368,7 +1369,19 @@ class NewSite extends Site
 			}
 		}
 		
-		passthru( "rsync -az '{$blog->old_site->path}/{$old_upload_path}'  '{$this->path}/{$new_upload_path}'" );
+		$old_upload_basename = basename( $old_upload_path );
+		$new_upload_basename = basename( $new_upload_path );
+
+// 		echo2( "\nrm -rf {$this->path}/{$new_upload_path}" );
+// 		echo2( "\ncp -rf {$blog->old_site->path}/{$old_upload_path} {$temp_directory}/" );
+// 		echo2( "\nmv {$temp_directory}/{$old_upload_basename} {$this->path}/{$new_upload_path}\n" );
+		
+		passthru( "rm -rf {$this->path}/{$new_upload_path}" );
+		passthru( "cp -rf {$blog->old_site->path}/{$old_upload_path} {$temp_directory}/" );
+		passthru( "mv {$temp_directory}/{$old_upload_basename} {$this->path}/{$new_upload_path}" );
+		
+//		echo2( "\nrsync -a --delete '{$blog->old_site->path}/{$old_upload_path}'  '{$this->path}/{$new_upload_path}/'\n   " );
+//		passthru( "rsync -a --delete '{$blog->old_site->path}/{$old_upload_path}'  '{$this->path}/{$new_upload_path}/'" );
 		
 		echo2( "done." );
 	}
