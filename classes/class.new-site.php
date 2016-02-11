@@ -1387,8 +1387,8 @@ class NewSite extends Site
 	}
 	public function set_permisions()
 	{
-		echo2( "\n   Set owner to apache:www..." );
-		passthru( "chown -R apache:www {$this->path}" );
+		echo2( "\n   Set owner to apache:apache..." );
+		passthru( "chown -R apache:apache {$this->path}" );
 		echo2( "done." );
 		echo2( "\n   Set permission to 2775..." );
 		passthru( "chmod -R 2775 {$this->path}" );
