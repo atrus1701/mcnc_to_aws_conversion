@@ -298,6 +298,25 @@ class Site
 			script_die( "Unable to insert option '{$key}' for blog '{$blog_id}'.", "INSERT INTO `{$options_table_name}` (`option_name`,`option_value`) VALUES ('{$key}','{$value}') ON DUPLICATE KEY UPDATE `option_name`='{$key}',`option_value`='{$value}';", $e->getMessage() );
 		}
 	}
+	public function add_sitemeta( $key, $value )
+	{
+		$table_name = $this->add_prefix( 'sitemeta' );
+		
+		if( ! $this->table_exists( $table_name ) ) {
+			return;
+		}
+		
+		$insert_sql = "INSERT INTO `{$table_name}` (`site_id`,`meta_key`,`meta_value`) VALUES (1,'{$key}','{$value}') ON DUPLICATE KEY UPDATE `site_id`=1,`meta_key`='{$key}',`meta_value`='{$value}';";
+		
+		try
+		{
+			$data = $this->dbconnection->query( $insert_sql );
+		}
+		catch( PDOException $e )
+		{
+			script_die( "Unable to insert site meta '{$key}'.", "INSERT INTO `{$table_name}` (`site_id`,`meta_key`,`meta_value`) VALUES (1,'{$key}','{$value}') ON DUPLICATE KEY UPDATE `site_id`=1,`meta_key`='{$key}',`meta_value`='{$value}';", $e->getMessage() );
+		}
+	}
 	public function get_table_rows( $table_name )
 	{
 		$table_name = $this->add_prefix( $table_name );

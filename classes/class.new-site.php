@@ -554,8 +554,8 @@ class NewSite extends Site
 		
 		$this->create_table_options_for_blog( $this->base_blog );
 
-		echo2( "\n   Inserting / updating 'ms_files_rewriting' in options table for blog {$this->name}.{$blog->new_id} from {$blog->old_site->name}.{$blog->old_id}..." );
-		$this->add_option( 1, 'ms_files_rewriting', '0' );
+		echo2( "\n   Inserting / updating 'ms_files_rewriting' in sitemeta table for blog {$this->name}.{$this->base_blog->new_id} from {$this->base_blog->old_site->name}.{$this->base_blog->old_id}..." );
+		$this->add_sitemeta( 'ms_files_rewriting', '0' );
 		echo2( "done." );
 		
 		foreach( $this->blogs as $blog )
