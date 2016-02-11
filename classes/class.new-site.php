@@ -1393,6 +1393,7 @@ class NewSite extends Site
 		echo2( "\n   Set permission to 2775..." );
 		passthru( "chmod -R 2775 {$this->path}" );
 		echo2( "done." );
+		echo2( "\n" );
 	}
 }
 
