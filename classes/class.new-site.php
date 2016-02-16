@@ -237,7 +237,14 @@ class NewSite extends Site
 			foreach( $rows as $row )
 			{
 				unset( $row['meta_id'] );
-			
+				
+				if( $this->name == 'sites' && 0 === strpos( $row['meta_key'], 'md_' ) ) {
+					continue;
+				}
+				if( 0 === strpos( $row['meta_key'], 'domainmap' ) ) {
+					continue;
+				}
+				
 				switch( $row['meta_key'] )
 				{
 					case 'site_admins':
@@ -301,6 +308,7 @@ class NewSite extends Site
 						$row['meta_value'] = $this->ipaddress;
 						break;
 					case 'domain_mapping':
+						continue;
 						$v = unserialize( $row['meta_value'] );
 						if( $v )
 						{
