@@ -956,6 +956,46 @@ class NewSite extends Site
 	{
 		$this->create_table_for_all_blogs( 'redirection_modules' );
 	}
+	public function create_woocommerce_api_keys()
+	{
+		$this->create_table_for_all_blogs( 'woocommerce_api_keys' );
+	}
+	public function create_woocommerce_attribute_taxonomies()
+	{
+		$this->create_table_for_all_blogs( 'woocommerce_attribute_taxonomies' );
+	}
+	public function create_woocommerce_downloadable_product_permissions()
+	{
+		$this->create_table_for_all_blogs( 'woocommerce_downloadable_product_permissions' );
+	}
+	public function create_woocommerce_order_itemmeta()
+	{
+		$this->create_table_for_all_blogs( 'woocommerce_order_itemmeta' );
+	}
+	public function create_woocommerce_order_items()
+	{
+		$this->create_table_for_all_blogs( 'woocommerce_order_items' );
+	}
+	public function create_woocommerce_tax_rate_locations()
+	{
+		$this->create_table_for_all_blogs( 'woocommerce_tax_rate_locations' );
+	}
+	public function create_woocommerce_tax_rates()
+	{
+		$this->create_table_for_all_blogs( 'woocommerce_tax_rates' );
+	}
+	public function create_woocommerce_termmeta()
+	{
+		$this->create_table_for_all_blogs( 'woocommerce_termmeta' );
+	}
+	public function create_cpk_wpcsv_export_queue()
+	{
+		$this->create_table_for_all_blogs( 'cpk_wpcsv_export_queue' );
+	}
+	public function create_cpk_wpcsv_log()
+	{
+		$this->create_table_for_all_blogs( 'cpk_wpcsv_log' );
+	}
 	protected function create_table_for_all_blogs( $name, $limit = 1000 )
 	{
 		foreach( array_merge( array( $this->base_blog ), $this->blogs ) as $blog ) {
