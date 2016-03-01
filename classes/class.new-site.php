@@ -55,6 +55,21 @@ class NewSite extends Site
 			$new_file_uploads_path = "{$blog->new_domain}{$blog->db_row['path']}wp-content/uploads/sites/{$blog->new_id}";
 
 			$blog->set_file_upload_paths( $old_file_uploads_path, $new_file_uploads_path );
+			
+			if( 'mapped' === $blog->domain_type ) {
+				$mapped_domain = $blog->old_site->get_mapped_domain( $blog->old_id );
+				if( ! $mapped_domain ) {
+					continue;
+				}
+				
+				if( FALSE !== strpos( $old_file_uploads_path, '/files' ) ) {
+					$old_file_uploads_path = "{$mapped_domain}/files";
+				}
+				else {
+					$old_file_uploads_path = "{$mapped_domain}/wp-content/uploads/sites/{$blog->old_id}";
+				}
+				$blog->set_file_upload_paths( $old_file_uploads_path, $new_file_uploads_path );
+			}
 		}
 	}
 	public function assign_base_blog( $site )
@@ -173,7 +188,10 @@ class NewSite extends Site
 		$uploads_paths = array();
 		foreach( $this->blogs as $blog )
 		{
-			$uploads_paths[ $blog->old_file_upload_path ] = $blog->new_file_upload_path;
+			foreach( $blog->file_upload_paths as $old => $new )
+			{
+				$uploads_paths[ $old ] = $new;
+			}
 		}
 		return $uploads_paths;
 	}

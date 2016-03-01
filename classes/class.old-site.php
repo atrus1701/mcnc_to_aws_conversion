@@ -43,5 +43,25 @@ class OldSite extends Site
 		
 		return NULL;
 	}
+	public function get_mapped_domain( $blog_id )
+	{
+		$domain_mapping_table_name = $this->add_prefix( 'domain_mapping' );
+		
+		try
+		{
+			$data = $this->dbconnection->query( "SELECT * FROM `{$domain_mapping_table_name}` WHERE `blog_id`={$blog_id}" );
+		}
+		catch( PDOException $e )
+		{
+			script_die( "Unable to get '{$this->name}' domain mapping data.", "SELECT * FROM `{$domain_mapping_table_name}` WHERE `blog_id`={$blog_id}", $e->getMessage() );
+		}
+		
+		if( $data->rowCount() > 0 ) {
+			$row = $data->fetch( PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT );
+			return $row['domain'];
+		}
+		
+		return NULL;
+	}
 }
 
