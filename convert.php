@@ -86,6 +86,16 @@ function populate_main_blog_tables()
 	create_table_term_taxonomy();
 	create_table_term_relationships();
 	create_table_termmeta();
+	create_woocommerce_api_keys();
+	create_woocommerce_attribute_taxonomies();
+	create_woocommerce_downloadable_product_permissions();
+	create_woocommerce_order_itemmeta();
+	create_woocommerce_order_items();
+	create_woocommerce_tax_rate_locations();
+	create_woocommerce_tax_rates();
+	create_woocommerce_termmeta();
+	create_cpk_wpcsv_export_queue();
+	create_cpk_wpcsv_log();
 }
 function populate_plugin_site_tables()
 {
@@ -474,6 +484,76 @@ function create_table_termmeta()
 	global $thissite;
 	echo2( "Creating the termmeta table(s) for new site '{$thissite->name}'..." );
 	$thissite->create_table_termmeta();
+	echo2( "done.\n" );
+}
+function create_woocommerce_api_keys()
+{
+	global $thissite;
+	echo2( "Creating the woocommerce_api_keys table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_woocommerce_api_keys();
+	echo2( "done.\n" );
+}
+function create_woocommerce_attribute_taxonomies()
+{
+	global $thissite;
+	echo2( "Creating the woocommerce_attribute_taxonomies table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_woocommerce_attribute_taxonomies();
+	echo2( "done.\n" );
+}
+function create_woocommerce_downloadable_product_permissions()
+{
+	global $thissite;
+	echo2( "Creating the woocommerce_downloadable_product_permissions table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_woocommerce_downloadable_product_permissions();
+	echo2( "done.\n" );
+}
+function create_woocommerce_order_itemmeta()
+{
+	global $thissite;
+	echo2( "Creating the woocommerce_order_itemmeta table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_woocommerce_order_itemmeta();
+	echo2( "done.\n" );
+}
+function create_woocommerce_order_items()
+{
+	global $thissite;
+	echo2( "Creating the woocommerce_order_items table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_woocommerce_order_items();
+	echo2( "done.\n" );
+}
+function create_woocommerce_tax_rate_locations()
+{
+	global $thissite;
+	echo2( "Creating the woocommerce_tax_rate_locations table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_woocommerce_tax_rate_locations();
+	echo2( "done.\n" );
+}
+function create_woocommerce_tax_rates()
+{
+	global $thissite;
+	echo2( "Creating the woocommerce_tax_rates table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_woocommerce_tax_rates();
+	echo2( "done.\n" );
+}
+function create_woocommerce_termmeta()
+{
+	global $thissite;
+	echo2( "Creating the woocommerce_termmeta table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_woocommerce_termmeta();
+	echo2( "done.\n" );
+}
+function create_cpk_wpcsv_export_queue()
+{
+	global $thissite;
+	echo2( "Creating the cpk_wpcsv_export_queue table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_cpk_wpcsv_export_queue();
+	echo2( "done.\n" );
+}
+function create_cpk_wpcsv_log()
+{
+	global $thissite;
+	echo2( "Creating the cpk_wpcsv_log table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_cpk_wpcsv_log();
 	echo2( "done.\n" );
 }
 function create_table_batch_create_table_queue()
