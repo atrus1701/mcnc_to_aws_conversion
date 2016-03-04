@@ -104,6 +104,30 @@ class Database
 
 		return $table_names;
 	}
+	public function get_table_list_by_prefix( $dbname, $prefix )
+	{
+		$prefix = str_replace( '%', '\%', $prefix );
+		$prefix = str_replace( '_', '\_', $prefix );
+		$select_sql = "SELECT TABLE_NAME FROM `tables` WHERE TABLE_SCHEMA = '{$dbname}' AND TABLE_NAME LIKE '{$prefix}%';";
+	
+		try
+		{
+			$data = $this->dbconnection->query( $select_sql );
+		}
+		catch( PDOException $e )
+		{
+			script_die( "Unable to determine if table `{$dbname}`.`{$table_name}`.", "SELECT TABLE_NAME FROM `tables` WHERE TABLE_SCHEMA = '{$dbname}' AND TABLE_NAME LIKE '{$prefix}%';", $e->getMessage() );
+		}
+		
+		$table_names = array();
+		while( $row = $data->fetch( PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT ) )
+		{
+			$table_names[] = $row['TABLE_NAME'];
+		}
+		$data = null;
+
+		return $table_names;
+	}
 	public function get_table_primary_key( $dbname, $table_name )
 	{
 		$column_name = NULL;

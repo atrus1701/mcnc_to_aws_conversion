@@ -1461,5 +1461,61 @@ class NewSite extends Site
 		echo2( "done." );
 		echo2( "\n" );
 	}
+	public function find_missing_tables()
+	{
+		global $db, $claspages, $pages;
+		
+		echo2( "\n   Gettting tables lists..." );
+		$claspages_tables = $claspages->get_table_list( TRUE );
+		$pages_tables = $pages->get_table_list( TRUE );
+		echo2( "done.\n" );
+		
+		echo2( "   Analyzing lists..." );
+		$count = 0;
+		$missed_tables = array();
+		foreach( $this->blogs as $blog )
+		{
+			$count++;
+			if( $count % 100 === 0 ) echo2( '.' );
+			
+			$old_table_list = $db->get_table_list_by_prefix(
+				$blog->old_site->dbname,
+				$blog->old_site->dbprefix . $blog->old_id . '_'
+			);
+			$new_table_list = $db->get_table_list_by_prefix(
+				$this->dbname,
+				$this->dbprefix . $blog->new_id . '_'
+			);
+			
+			foreach( $old_table_list as &$table_name )
+			{
+				$table_name = $blog->old_site->remove_table_prefix( $table_name );
+			}
+			foreach( $new_table_list as &$table_name )
+			{
+				$table_name = $this->remove_table_prefix( $table_name );
+			}
+			
+			$mtables = array_diff( $old_table_list, $new_table_list );
+			foreach( $mtables as $table_name )
+			{
+				$missed_tables[] = $blog->old_site->dbprefix . $blog->old_id . '_' . $table_name;
+			}
+		}
+		echo2( "done.\n" );
+		
+		if( 0 === count( $missed_tables ) )
+		{
+			echo2( "   No missed tables.\n" );
+		}
+		else
+		{
+			echo2( "   " . count( $missed_tables ) . " missed tables:\n" );
+			foreach( $missed_tables as $table_name )
+			{
+				echo2( "      {$table_name}\n" );
+			}
+		}
+	}
 }
 
