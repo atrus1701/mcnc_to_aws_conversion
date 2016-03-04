@@ -86,16 +86,6 @@ function populate_main_blog_tables()
 	create_table_term_taxonomy();
 	create_table_term_relationships();
 	create_table_termmeta();
-	create_woocommerce_api_keys();
-	create_woocommerce_attribute_taxonomies();
-	create_woocommerce_downloadable_product_permissions();
-	create_woocommerce_order_itemmeta();
-	create_woocommerce_order_items();
-	create_woocommerce_tax_rate_locations();
-	create_woocommerce_tax_rates();
-	create_woocommerce_termmeta();
-	create_cpk_wpcsv_export_queue();
-	create_cpk_wpcsv_log();
 }
 function populate_plugin_site_tables()
 {
@@ -130,6 +120,50 @@ function populate_plugin_site_tables()
 	create_table_orghub_upload();
 	create_table_orghub_user();
 
+	echo2( "\n" );
+	create_table_woocommerce_api_keys();
+	create_table_woocommerce_attribute_taxonomies();
+	create_table_woocommerce_downloadable_product_permissions();
+	create_table_woocommerce_order_itemmeta();
+	create_table_woocommerce_order_items();
+	create_table_woocommerce_tax_rate_locations();
+	create_table_woocommerce_tax_rates();
+	create_table_woocommerce_termmeta();
+	
+	echo2( "\n" );
+	create_table_cpk_wpcsv_export_queue();
+	create_table_cpk_wpcsv_log();
+
+	echo2( "\n" );
+    create_table_stoutgc();
+	
+	echo2( "\n" );
+	create_table_app_appointments();
+	create_table_app_cache();
+	create_table_app_exceptions();
+	create_table_app_services();
+	create_table_app_transactions();
+	create_table_app_workers();
+	create_table_app_working_hours();
+	
+	echo2( "\n" );	
+	create_table_em_bookings();
+	create_table_em_bookings_relationships();
+	create_table_em_coupons();
+	create_table_em_email_queue();
+	create_table_em_events();
+	create_table_em_locations();
+	create_table_em_meta();
+	create_table_em_tickets();
+	create_table_em_tickets_bookings();
+	create_table_em_transactions();
+	
+	echo2( "\n" );
+	create_table_ai1ec_event_category_meta
+	create_table_ai1ec_event_feeds
+	create_table_ai1ec_event_instances
+	create_table_ai1ec_events
+	
 	echo2( "\n" );
 //	Don't copy...
 //	create_table_smackcsv_line_log();
@@ -486,74 +520,228 @@ function create_table_termmeta()
 	$thissite->create_table_termmeta();
 	echo2( "done.\n" );
 }
-function create_woocommerce_api_keys()
+function create_table_woocommerce_api_keys()
 {
 	global $thissite;
 	echo2( "Creating the woocommerce_api_keys table(s) for new site '{$thissite->name}'..." );
 	$thissite->create_table_woocommerce_api_keys();
 	echo2( "done.\n" );
 }
-function create_woocommerce_attribute_taxonomies()
+function create_table_woocommerce_attribute_taxonomies()
 {
 	global $thissite;
 	echo2( "Creating the woocommerce_attribute_taxonomies table(s) for new site '{$thissite->name}'..." );
 	$thissite->create_table_woocommerce_attribute_taxonomies();
 	echo2( "done.\n" );
 }
-function create_woocommerce_downloadable_product_permissions()
+function create_table_woocommerce_downloadable_product_permissions()
 {
 	global $thissite;
 	echo2( "Creating the woocommerce_downloadable_product_permissions table(s) for new site '{$thissite->name}'..." );
 	$thissite->create_table_woocommerce_downloadable_product_permissions();
 	echo2( "done.\n" );
 }
-function create_woocommerce_order_itemmeta()
+function create_table_woocommerce_order_itemmeta()
 {
 	global $thissite;
 	echo2( "Creating the woocommerce_order_itemmeta table(s) for new site '{$thissite->name}'..." );
 	$thissite->create_table_woocommerce_order_itemmeta();
 	echo2( "done.\n" );
 }
-function create_woocommerce_order_items()
+function create_table_woocommerce_order_items()
 {
 	global $thissite;
 	echo2( "Creating the woocommerce_order_items table(s) for new site '{$thissite->name}'..." );
 	$thissite->create_table_woocommerce_order_items();
 	echo2( "done.\n" );
 }
-function create_woocommerce_tax_rate_locations()
+function create_table_woocommerce_tax_rate_locations()
 {
 	global $thissite;
 	echo2( "Creating the woocommerce_tax_rate_locations table(s) for new site '{$thissite->name}'..." );
 	$thissite->create_table_woocommerce_tax_rate_locations();
 	echo2( "done.\n" );
 }
-function create_woocommerce_tax_rates()
+function create_table_woocommerce_tax_rates()
 {
 	global $thissite;
 	echo2( "Creating the woocommerce_tax_rates table(s) for new site '{$thissite->name}'..." );
 	$thissite->create_table_woocommerce_tax_rates();
 	echo2( "done.\n" );
 }
-function create_woocommerce_termmeta()
+function create_table_woocommerce_termmeta()
 {
 	global $thissite;
 	echo2( "Creating the woocommerce_termmeta table(s) for new site '{$thissite->name}'..." );
 	$thissite->create_table_woocommerce_termmeta();
 	echo2( "done.\n" );
 }
-function create_cpk_wpcsv_export_queue()
+function create_table_cpk_wpcsv_export_queue()
 {
 	global $thissite;
 	echo2( "Creating the cpk_wpcsv_export_queue table(s) for new site '{$thissite->name}'..." );
 	$thissite->create_table_cpk_wpcsv_export_queue();
 	echo2( "done.\n" );
 }
-function create_cpk_wpcsv_log()
+function create_table_cpk_wpcsv_log()
 {
 	global $thissite;
 	echo2( "Creating the cpk_wpcsv_log table(s) for new site '{$thissite->name}'..." );
 	$thissite->create_table_cpk_wpcsv_log();
+	echo2( "done.\n" );
+}
+function create_table_stoutgc()
+{
+	global $thissite;
+	echo2( "Creating the stoutgc table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_stoutgc();
+	echo2( "done.\n" );
+}
+function create_table_app_appointments()
+{
+	global $thissite;
+	echo2( "Creating the app_appointments table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_app_appointments();
+	echo2( "done.\n" );
+}
+function create_table_app_cache()
+{
+	global $thissite;
+	echo2( "Creating the app_cache table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_app_cache();
+	echo2( "done.\n" );
+}
+function create_table_app_exceptions()
+{
+	global $thissite;
+	echo2( "Creating the app_exceptions table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_app_exceptions();
+	echo2( "done.\n" );
+}
+function create_table_app_services()
+{
+	global $thissite;
+	echo2( "Creating the app_services table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_app_services();
+	echo2( "done.\n" );
+}
+function create_table_app_transactions()
+{
+	global $thissite;
+	echo2( "Creating the app_transactions table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_app_transactions();
+	echo2( "done.\n" );
+}
+function create_table_app_workers()
+{
+	global $thissite;
+	echo2( "Creating the app_workers table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_app_workers();
+	echo2( "done.\n" );
+}
+function create_table_app_working_hours()
+{
+	global $thissite;
+	echo2( "Creating the app_working_hours table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_app_working_hours();
+	echo2( "done.\n" );
+}
+function create_table_em_bookings()
+{
+	global $thissite;
+	echo2( "Creating the em_bookings table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_em_bookings();
+	echo2( "done.\n" );
+}
+function create_table_em_bookings_relationships()
+{
+	global $thissite;
+	echo2( "Creating the em_bookings_relationships table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_em_bookings_relationships();
+	echo2( "done.\n" );
+}
+function create_table_em_coupons()
+{
+	global $thissite;
+	echo2( "Creating the em_coupons table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_em_coupons();
+	echo2( "done.\n" );
+}
+function create_table_em_email_queue()
+{
+	global $thissite;
+	echo2( "Creating the em_email_queue table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_em_email_queue();
+	echo2( "done.\n" );
+}
+function create_table_em_events()
+{
+	global $thissite;
+	echo2( "Creating the em_events table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_em_events();
+	echo2( "done.\n" );
+}
+function create_table_em_locations()
+{
+	global $thissite;
+	echo2( "Creating the em_locations table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_em_locations();
+	echo2( "done.\n" );
+}
+function create_table_em_meta()
+{
+	global $thissite;
+	echo2( "Creating the em_meta table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_em_meta();
+	echo2( "done.\n" );
+}
+function create_table_em_tickets()
+{
+	global $thissite;
+	echo2( "Creating the em_tickets table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_em_tickets();
+	echo2( "done.\n" );
+}
+function create_table_em_tickets_bookings()
+{
+	global $thissite;
+	echo2( "Creating the em_tickets_bookings table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_em_tickets_bookings();
+	echo2( "done.\n" );
+}
+function create_table_em_transactions()
+{
+	global $thissite;
+	echo2( "Creating the em_transactions table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_em_transactions();
+	echo2( "done.\n" );
+}
+function create_table_ai1ec_event_category_meta()
+{
+	global $thissite;
+	echo2( "Creating the ai1ec_event_category_meta table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_ai1ec_event_category_meta();
+	echo2( "done.\n" );
+}
+function create_table_ai1ec_event_feeds()
+{
+	global $thissite;
+	echo2( "Creating the ai1ec_event_feeds table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_ai1ec_event_feeds();
+	echo2( "done.\n" );
+}
+function create_table_ai1ec_event_instances()
+{
+	global $thissite;
+	echo2( "Creating the ai1ec_event_instances table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_ai1ec_event_instances();
+	echo2( "done.\n" );
+}
+function create_table_ai1ec_events()
+{
+	global $thissite;
+	echo2( "Creating the ai1ec_events table(s) for new site '{$thissite->name}'..." );
+	$thissite->create_table_ai1ec_events();
 	echo2( "done.\n" );
 }
 function create_table_batch_create_table_queue()

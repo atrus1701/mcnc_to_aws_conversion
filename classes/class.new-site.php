@@ -956,45 +956,137 @@ class NewSite extends Site
 	{
 		$this->create_table_for_all_blogs( 'redirection_modules' );
 	}
-	public function create_woocommerce_api_keys()
+	public function create_table_woocommerce_api_keys()
 	{
 		$this->create_table_for_all_blogs( 'woocommerce_api_keys' );
 	}
-	public function create_woocommerce_attribute_taxonomies()
+	public function create_table_woocommerce_attribute_taxonomies()
 	{
 		$this->create_table_for_all_blogs( 'woocommerce_attribute_taxonomies' );
 	}
-	public function create_woocommerce_downloadable_product_permissions()
+	public function create_table_woocommerce_downloadable_product_permissions()
 	{
 		$this->create_table_for_all_blogs( 'woocommerce_downloadable_product_permissions' );
 	}
-	public function create_woocommerce_order_itemmeta()
+	public function create_table_woocommerce_order_itemmeta()
 	{
 		$this->create_table_for_all_blogs( 'woocommerce_order_itemmeta' );
 	}
-	public function create_woocommerce_order_items()
+	public function create_table_woocommerce_order_items()
 	{
 		$this->create_table_for_all_blogs( 'woocommerce_order_items' );
 	}
-	public function create_woocommerce_tax_rate_locations()
+	public function create_table_woocommerce_tax_rate_locations()
 	{
 		$this->create_table_for_all_blogs( 'woocommerce_tax_rate_locations' );
 	}
-	public function create_woocommerce_tax_rates()
+	public function create_table_woocommerce_tax_rates()
 	{
 		$this->create_table_for_all_blogs( 'woocommerce_tax_rates' );
 	}
-	public function create_woocommerce_termmeta()
+	public function create_table_woocommerce_termmeta()
 	{
 		$this->create_table_for_all_blogs( 'woocommerce_termmeta' );
 	}
-	public function create_cpk_wpcsv_export_queue()
+	public function create_table_cpk_wpcsv_export_queue()
 	{
 		$this->create_table_for_all_blogs( 'cpk_wpcsv_export_queue' );
 	}
-	public function create_cpk_wpcsv_log()
+	public function create_table_cpk_wpcsv_log()
 	{
 		$this->create_table_for_all_blogs( 'cpk_wpcsv_log' );
+	}
+	public function create_table_stoutgc()
+	{
+		$this->create_table_for_all_blogs( 'stoutgc' );
+	}
+	public function create_table_app_appointments()
+	{
+		// TODO: modify user and worker column.
+		$this->create_table_for_all_blogs( 'app_appointments' );
+	}
+	public function create_table_app_cache()
+	{
+		$this->create_table_for_all_blogs( 'app_cache' );
+	}
+	public function create_table_app_exceptions()
+	{
+		$this->create_table_for_all_blogs( 'app_exceptions' );
+	}
+	public function create_table_app_services()
+	{
+		$this->create_table_for_all_blogs( 'app_services' );
+	}
+	public function create_table_app_transactions()
+	{
+		$this->create_table_for_all_blogs( 'app_transactions' );
+	}
+	public function create_table_app_workers()
+	{
+		$this->create_table_for_all_blogs( 'app_workers' );
+	}
+	public function create_table_app_working_hours()
+	{
+		$this->create_table_for_all_blogs( 'app_working_hours' );
+	}
+	public function create_table_em_bookings()
+	{
+		// TODO: modify person_id column??
+		$this->create_table_for_all_blogs( 'em_bookings' );
+	}
+	public function create_table_em_bookings_relationships()
+	{
+		$this->create_table_for_all_blogs( 'em_bookings_relationships' );
+	}
+	public function create_table_em_coupons()
+	{
+		$this->create_table_for_all_blogs( 'em_coupons' );
+	}
+	public function create_table_em_email_queue()
+	{
+		$this->create_table_for_all_blogs( 'em_email_queue' );
+	}
+	public function create_table_em_events()
+	{
+		// TODO: modify blog_id column.
+		$this->create_table_for_all_blogs( 'em_events' );
+	}
+	public function create_table_em_locations()
+	{
+		// TODO: modify blog_id column.
+		$this->create_table_for_all_blogs( 'em_locations' );
+	}
+	public function create_table_em_meta()
+	{
+		$this->create_table_for_all_blogs( 'em_meta' );
+	}
+	public function create_table_em_tickets()
+	{
+		$this->create_table_for_all_blogs( 'em_tickets' );
+	}
+	public function create_table_em_tickets_bookings()
+	{
+		$this->create_table_for_all_blogs( 'em_tickets_bookings' );
+	}
+	public function create_table_em_transactions()
+	{
+		$this->create_table_for_all_blogs( 'em_transactions' );
+	}
+	public function create_table_ai1ec_event_category_meta()
+	{
+		$this->create_table_for_all_blogs( 'ai1ec_event_category_meta' );
+	}
+	public function create_table_ai1ec_event_feeds()
+	{
+		$this->create_table_for_all_blogs( 'ai1ec_event_feeds' );
+	}
+	public function create_table_ai1ec_event_instances()
+	{
+		$this->create_table_for_all_blogs( 'ai1ec_event_instances' );
+	}
+	public function create_table_ai1ec_events()
+	{
+		$this->create_table_for_all_blogs( 'ai1ec_events' );
 	}
 	protected function create_table_for_all_blogs( $name, $limit = 1000 )
 	{
