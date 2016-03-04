@@ -493,7 +493,7 @@ class NewSite extends Site
 					{
 						$row = array(
 							'user_id' => $user->new_id,
-							'meta_key' => $this->add_prefix( $blog_id.'_'.$key ),
+							'meta_key' => $this->add_prefix( $new_blog_id.'_'.$key ),
 							'meta_value' => $value,
 						);
 						$this->insert( $row, $name, $this->dbname, $table_name );
