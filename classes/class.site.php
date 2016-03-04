@@ -435,12 +435,11 @@ class Site
 			$next_underscore_index = strpos( $new_table_name, '_' );
 			if( FALSE !== $next_underscore_index ) {
 			
-				$possible_blog_id = substr( $new_table_name, 0, $next_underscore_index - 1 );
+				$possible_blog_id = substr( $new_table_name, 0, $next_underscore_index );
 		
 				if( is_numeric( $possible_blog_id ) ) {
-					$new_table_name = substr( $new_table_name, strlen( $possible_blog_id ) + 2 );
+					$new_table_name = substr( $new_table_name, strlen( $possible_blog_id ) + 1 );
 				}
-			
 			}
 		}
 	
