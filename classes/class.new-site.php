@@ -45,15 +45,12 @@ class NewSite extends Site
 	{
 		foreach( $this->blogs as &$blog )
 		{
-			$old_file_uploads_path = $blog->old_site->get_option( $blog->old_id, 'fileupload_url' );			
-			if( ! $old_file_uploads_path ) {
-				$old_file_uploads_path = "{$blog->old_domain}{$blog->db_row['path']}wp-content/uploads/sites/{$blog->old_id}";
-			} else {
-				$old_file_uploads_path = str_replace( 'http://', '', $old_file_uploads_path );
-				$old_file_uploads_path = str_replace( 'https://', '', $old_file_uploads_path );
-			}
 			$new_file_uploads_path = "{$blog->new_domain}{$blog->db_row['path']}wp-content/uploads/sites/{$blog->new_id}";
 
+			$old_file_uploads_path = "{$blog->old_domain}{$blog->db_row['path']}files";
+			$blog->set_file_upload_paths( $old_file_uploads_path, $new_file_uploads_path );
+			
+			$old_file_uploads_path = "{$blog->old_domain}{$blog->db_row['path']}wp-content/uploads/sites/{$blog->old_id}";
 			$blog->set_file_upload_paths( $old_file_uploads_path, $new_file_uploads_path );
 			
 			if( 'mapped' === $blog->domain_type ) {
@@ -61,13 +58,11 @@ class NewSite extends Site
 				if( ! $mapped_domain ) {
 					continue;
 				}
-				
-				if( FALSE !== strpos( $old_file_uploads_path, '/files' ) ) {
-					$old_file_uploads_path = "{$mapped_domain}/files";
-				}
-				else {
-					$old_file_uploads_path = "{$mapped_domain}/wp-content/uploads/sites/{$blog->old_id}";
-				}
+
+				$old_file_uploads_path = "{$mapped_domain}/files";
+				$blog->set_file_upload_paths( $old_file_uploads_path, $new_file_uploads_path );
+			
+				$old_file_uploads_path = "{$mapped_domain}/wp-content/uploads/sites/{$blog->old_id}";
 				$blog->set_file_upload_paths( $old_file_uploads_path, $new_file_uploads_path );
 			}
 		}
