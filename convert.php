@@ -159,10 +159,10 @@ function populate_plugin_site_tables()
 	create_table_em_transactions();
 	
 	echo2( "\n" );
-	create_table_ai1ec_event_category_meta
-	create_table_ai1ec_event_feeds
-	create_table_ai1ec_event_instances
-	create_table_ai1ec_events
+	create_table_ai1ec_event_category_meta();
+	create_table_ai1ec_event_feeds();
+	create_table_ai1ec_event_instances();
+	create_table_ai1ec_events();
 	
 	echo2( "\n" );
 //	Don't copy...
