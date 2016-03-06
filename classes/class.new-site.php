@@ -1643,7 +1643,12 @@ class NewSite extends Site
 		$old_upload_path = $blog->old_site->get_option( $blog->old_id, 'upload_path' );
 		$new_upload_path = $this->get_option( $blog->new_id, 'upload_path' );
 		
-		if( $old_upload_path )
+		if( ! $old_upload_path )
+		{
+			echo2( "done.\n      No old upload path." );
+			return;
+		}
+		else
 		{
 			if( FALSE === strpos( $old_upload_path, '/1/' ) )
 			{
