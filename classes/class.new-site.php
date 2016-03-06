@@ -148,7 +148,8 @@ class NewSite extends Site
 		$count = 1;
 		foreach( $this->users as $users )
 		{
-			foreach( $users as $user ) {
+			foreach( $users as $user )
+			{
 				$user->set_new_id( $count );
 			}
 			$count++;
@@ -1273,7 +1274,8 @@ class NewSite extends Site
 	}
 	protected function create_table_for_all_blogs( $name, $limit = 1000 )
 	{
-		foreach( array_merge( array( $this->base_blog ), $this->blogs ) as $blog ) {
+		foreach( array_merge( array( $this->base_blog ), $this->blogs ) as $blog )
+		{
 			$this->create_table_for_blog( $blog, $name );
 		}
 		
@@ -1317,7 +1319,8 @@ class NewSite extends Site
 	}
 	public function find_and_replace_file_uploads_path()
 	{
-		foreach( $this->blogs as $blog ) {
+		foreach( $this->blogs as $blog )
+		{
 			$this->find_and_replace_file_uploads_path_for_blog( $blog );
 		}
 		
@@ -1620,7 +1623,8 @@ class NewSite extends Site
 		$this->copy_base_uploads_folder( $this->base_blog );
 		
 		// all other blogs
-		foreach( $this->blogs as $blog ) {
+		foreach( $this->blogs as $blog )
+		{
 			$this->copy_uploads_folder_for_blog( $blog );
 		}
 		
