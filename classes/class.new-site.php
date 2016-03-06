@@ -1610,16 +1610,22 @@ class NewSite extends Site
 		
 		$exclude_files = '--exclude wp-config.php --exclude=.git --exclude=error_log';
 		$exclude_files .= ' --exclude=wp-content/blogs.dir --exclude=wp-content/uploads';
+
+		echo2( "\n" );
 		
+		echo2( "   Copy files from clas_pages/public_html to /var/www/html..." );
 		passthru( "rsync -az $exclude_files '{$claspages->path}/'  '{$this->path}/'" );
+		echo2( "done.\n" );
+		echo2( "   Copy files from pages/public_html to /var/www/html..." );
 		passthru( "rsync -az $exclude_files '{$pages->path}/'  '{$this->path}/'" );
+		echo2( "done.\n" );
 	}
 	public function copy_uploads_folder()
 	{
 		// base blog
 		echo2( "\n   Copy base blog extra upload files..." );
 		passthru( "rsync -az --exclude sites '{$this->base_blog->old_site->path}/wp-content/uploads/'  '{$this->path}/wp-content/uploads/'" );
-		echo2( "done." );
+		echo2( "done.\n      Copied files from '{$this->base_blog->old_site->path}/wp-content/uploads/' to '{$this->path}/wp-content/uploads/'." );
 		$this->copy_base_uploads_folder( $this->base_blog );
 		
 		// all other blogs
@@ -1641,7 +1647,7 @@ class NewSite extends Site
 		{
 			if( FALSE === strpos( $old_upload_path, '/1/' ) )
 			{
-				echo2( "error.\n     No base blog upload path." );
+				echo2( "error.\n      No base blog upload path." );
 				return;
 			}
 
@@ -1668,7 +1674,7 @@ class NewSite extends Site
 		
 		passthru( "rsync -az '{$blog->old_site->path}/{$old_upload_path}'  '{$this->path}/{$new_upload_path}'" );
 		
-		echo2( "done." );
+		echo2( "done.\n      Copied files from '{$blog->old_site->path}/{$old_upload_path}' to '{$this->path}/{$new_upload_path}'." );
 	}
 	protected function copy_uploads_folder_for_blog( $blog )
 	{
@@ -1728,7 +1734,7 @@ class NewSite extends Site
 //		echo2( "\nrsync -a --delete '{$blog->old_site->path}/{$old_upload_path}'  '{$this->path}/{$new_upload_path}/'\n   " );
 //		passthru( "rsync -a --delete '{$blog->old_site->path}/{$old_upload_path}'  '{$this->path}/{$new_upload_path}/'" );
 		
-		echo2( "done." );
+		echo2( "done.\n      Copied files from '{$blog->old_site->path}/{$old_upload_path}' to '{$this->path}/{$new_upload_path}'." );
 	}
 	public function set_permisions()
 	{
