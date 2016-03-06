@@ -643,8 +643,11 @@ class NewSite extends Site
 							$row['option_value'] = serialize( $v );
 						}
 						break;
+					case $blog->old_site->dbprefix . $blog->old_id . '_user_roles':
+						$row['option_name'] = $this->dbprefix . $blog->new_id . '_user_roles';
+						break;
 				}
-			
+				
 				$this->insert( $row, $name, $this->dbname, $table_name );
 			}
 			
