@@ -994,10 +994,11 @@ function set_permisions()
 //========================================================================================
 //============================================================================= MAIN =====
 
+extract($config);
+
 clear_log();
 print_header( 'Convert database started' );
 
-extract($config);
 main();
 
 print_header( 'Convert database ended' );
