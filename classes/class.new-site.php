@@ -1087,7 +1087,7 @@ class NewSite extends Site
 	}
 	protected function create_table_em_bookings_for_blog( $blog )
 	{
-		$name = 'app_appointments';
+		$name = 'em_bookings';
 		echo2( "\n   Create em_bookings table for blog {$this->name}.{$blog->new_id} from {$blog->old_site->name}.{$blog->old_id}..." );
 		
 		$op = '';
@@ -1149,7 +1149,7 @@ class NewSite extends Site
 	}
 	protected function create_table_em_events_for_blog( $blog )
 	{
-		$name = 'app_appointments';
+		$name = 'em_events';
 		echo2( "\n   Create em_events table for blog {$this->name}.{$blog->new_id} from {$blog->old_site->name}.{$blog->old_id}..." );
 		
 		$op = '';
@@ -1199,7 +1199,7 @@ class NewSite extends Site
 	}
 	protected function create_table_em_locations_for_blog( $blog )
 	{
-		$name = 'app_appointments';
+		$name = 'em_locations';
 		echo2( "\n   Create em_locations table for blog {$this->name}.{$blog->new_id} from {$blog->old_site->name}.{$blog->old_id}..." );
 		
 		$op = '';
