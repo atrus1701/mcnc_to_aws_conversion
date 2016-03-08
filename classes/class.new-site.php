@@ -647,6 +647,25 @@ class NewSite extends Site
 					case $blog->old_site->dbprefix . $blog->old_id . '_user_roles':
 						$row['option_name'] = $this->dbprefix . $blog->new_id . '_user_roles';
 						break;
+					case 'appointments_workers_padding':
+						$padding = unserialize( $row['option_value'] );
+						$new_padding = array();
+						foreach( $padding as $user_id => $value )
+						{
+							$new_user_id = $this->get_new_user_id( $blog->old_site->name, $user_id );
+							$new_padding[ $new_user_id ] = $value;
+						}
+						$row['option_value'] = serialize( $new_padding );
+						break;
+				}
+				
+				if( 0 === strpos( $row['option_name'], 'app-worker_location-' ) )
+				{
+					$last_dash_location = strrpos( $row['option_name'], '-' );
+					$user_id = substr( $row['option_name'], $last_dash_location + 1 );
+					$user_id = intval( $user_id );
+					$new_user_id = $this->get_new_user_id( $blog->old_site->name, $user_id );
+					$row['option_name'] = 'app-worker_location-' . $new_user_id;
 				}
 				
 				$this->insert( $row, $name, $this->dbname, $table_name );
@@ -709,7 +728,54 @@ class NewSite extends Site
 	}
 	public function create_table_postmeta()
 	{
-		$this->create_table_for_all_blogs( 'postmeta' );
+		foreach( array_merge( array( $this->base_blog ), $this->blogs ) as $blog )
+		{
+			$this->create_table_postmeta_for_blog( $blog );
+		}
+	}
+	protected function create_table_postmeta_for_blog( $blog )
+	{
+		$name = 'postmeta';
+		echo2( "\n   Create postmeta table for blog {$this->name}.{$blog->new_id} from {$blog->old_site->name}.{$blog->old_id}..." );
+		
+		$op = '';
+		if( $blog->old_id > 1 ) {
+			$op = "{$blog->old_id}_";
+		}
+		$np = '';
+		if( $blog->new_id > 1 ) {
+			$np = "{$blog->new_id}_";
+		}
+		
+		$table_name = $this->add_prefix( $np.$name );
+		if( ! $blog->old_site->table_exists( $blog->old_site->add_prefix( $op.$name ) ) ) {
+			echo2( "done.\n      Table does not exist." );
+			return;
+		}
+		
+		$this->create_table( $blog->old_site, $op.$name, $table_name );
+
+		$count = 0;
+		while( $rows = $blog->old_site->get_blog_table_row_list( $blog->old_id, $name, $count, 1000 ) )
+		{
+			echo2( '.' );
+			
+			foreach( $rows as $row )
+			{
+				switch( $row['meta_key'] )
+				{
+					case '_blog_id':
+						$row['meta_value'] = $this->get_new_blog_id( $blog->old_site->name, $row['meta_value'] );
+						break;
+				}
+				
+				$this->insert( $row, $name, $this->dbname, $table_name );
+			}
+			
+			$count++;
+		}
+		
+		echo2( "done." );
 	}
 	public function create_table_comments()
 	{
@@ -1060,8 +1126,54 @@ class NewSite extends Site
 	}
 	public function create_table_app_exceptions()
 	{
-		$this->create_table_for_all_blogs( 'app_exceptions' );
+		foreach( array_merge( array( $this->base_blog ), $this->blogs ) as $blog )
+		{
+			$this->create_table_app_exceptions_for_blog( $blog );
+		}
 	}
+	protected function create_table_app_exceptions_for_blog( $blog )
+	{
+		$name = 'app_exceptions';
+		echo2( "\n   Create app_exceptions table for blog {$this->name}.{$blog->new_id} from {$blog->old_site->name}.{$blog->old_id}..." );
+		
+		$op = '';
+		if( $blog->old_id > 1 ) {
+			$op = "{$blog->old_id}_";
+		}
+		$np = '';
+		if( $blog->new_id > 1 ) {
+			$np = "{$blog->new_id}_";
+		}
+		
+		$table_name = $this->add_prefix( $np.$name );
+		if( ! $blog->old_site->table_exists( $blog->old_site->add_prefix( $op.$name ) ) ) {
+			echo2( "done.\n      Table does not exist." );
+			return;
+		}
+		
+		$this->create_table( $blog->old_site, $op.$name, $table_name );
+
+		$count = 0;
+		while( $rows = $blog->old_site->get_blog_table_row_list( $blog->old_id, $name, $count, 1000 ) )
+		{
+			echo2( '.' );
+			
+			foreach( $rows as $row )
+			{
+				if( $row['worker'] ) {
+					$row['worker'] = $this->get_new_user_id( $blog->old_site->name, $row['worker'] );
+				} else {
+					$row['worker'] = 0;
+				}
+				
+				$this->insert( $row, $name, $this->dbname, $table_name );
+			}
+			
+			$count++;
+		}
+		
+		echo2( "done." );
+	}	
 	public function create_table_app_services()
 	{
 		$this->create_table_for_all_blogs( 'app_services' );
@@ -1072,12 +1184,104 @@ class NewSite extends Site
 	}
 	public function create_table_app_workers()
 	{
-		$this->create_table_for_all_blogs( 'app_workers' );
+		foreach( array_merge( array( $this->base_blog ), $this->blogs ) as $blog )
+		{
+			$this->create_table_app_workers_for_blog( $blog );
+		}
+	}
+	protected function create_table_app_workers_for_blog( $blog )
+	{
+		$name = 'app_workers';
+		echo2( "\n   Create app_workers table for blog {$this->name}.{$blog->new_id} from {$blog->old_site->name}.{$blog->old_id}..." );
+		
+		$op = '';
+		if( $blog->old_id > 1 ) {
+			$op = "{$blog->old_id}_";
+		}
+		$np = '';
+		if( $blog->new_id > 1 ) {
+			$np = "{$blog->new_id}_";
+		}
+		
+		$table_name = $this->add_prefix( $np.$name );
+		if( ! $blog->old_site->table_exists( $blog->old_site->add_prefix( $op.$name ) ) ) {
+			echo2( "done.\n      Table does not exist." );
+			return;
+		}
+		
+		$this->create_table( $blog->old_site, $op.$name, $table_name );
+
+		$count = 0;
+		while( $rows = $blog->old_site->get_blog_table_row_list( $blog->old_id, $name, $count, 1000 ) )
+		{
+			echo2( '.' );
+			
+			foreach( $rows as $row )
+			{
+				if( $row['ID'] ) {
+					$row['ID'] = $this->get_new_user_id( $blog->old_site->name, $row['ID'] );
+				} else {
+					$row['ID'] = 0;
+				}
+				
+				$this->insert( $row, $name, $this->dbname, $table_name );
+			}
+			
+			$count++;
+		}
+		
+		echo2( "done." );
 	}
 	public function create_table_app_working_hours()
 	{
-		$this->create_table_for_all_blogs( 'app_working_hours' );
+		foreach( array_merge( array( $this->base_blog ), $this->blogs ) as $blog )
+		{
+			$this->create_table_app_working_hours_for_blog( $blog );
+		}
 	}
+	protected function create_table_app_working_hours_for_blog( $blog )
+	{
+		$name = 'app_working_hours';
+		echo2( "\n   Create app_working_hours table for blog {$this->name}.{$blog->new_id} from {$blog->old_site->name}.{$blog->old_id}..." );
+		
+		$op = '';
+		if( $blog->old_id > 1 ) {
+			$op = "{$blog->old_id}_";
+		}
+		$np = '';
+		if( $blog->new_id > 1 ) {
+			$np = "{$blog->new_id}_";
+		}
+		
+		$table_name = $this->add_prefix( $np.$name );
+		if( ! $blog->old_site->table_exists( $blog->old_site->add_prefix( $op.$name ) ) ) {
+			echo2( "done.\n      Table does not exist." );
+			return;
+		}
+		
+		$this->create_table( $blog->old_site, $op.$name, $table_name );
+
+		$count = 0;
+		while( $rows = $blog->old_site->get_blog_table_row_list( $blog->old_id, $name, $count, 1000 ) )
+		{
+			echo2( '.' );
+			
+			foreach( $rows as $row )
+			{
+				if( $row['worker'] ) {
+					$row['worker'] = $this->get_new_user_id( $blog->old_site->name, $row['worker'] );
+				} else {
+					$row['worker'] = 0;
+				}
+				
+				$this->insert( $row, $name, $this->dbname, $table_name );
+			}
+			
+			$count++;
+		}
+		
+		echo2( "done." );
+	}	
 	public function create_table_em_bookings()
 	{
 		foreach( array_merge( array( $this->base_blog ), $this->blogs ) as $blog )
@@ -1181,6 +1385,11 @@ class NewSite extends Site
 				} else {
 					$row['blog_id'] = 0;
 				}
+				if( $row['event_owner'] ) {
+					$row['event_owner'] = $this->get_new_user_id( $blog->old_site->name, $row['event_owner'] );
+				} else {
+					$row['event_owner'] = 0;
+				}
 				
 				$this->insert( $row, $name, $this->dbname, $table_name );
 			}
@@ -1230,6 +1439,11 @@ class NewSite extends Site
 					$row['blog_id'] = $this->get_new_blog_id( $blog->old_site->name, $row['blog_id'] );
 				} else {
 					$row['blog_id'] = 0;
+				}
+				if( $row['location_owner'] ) {
+					$row['location_owner'] = $this->get_new_user_id( $blog->old_site->name, $row['location_owner'] );
+				} else {
+					$row['location_owner'] = 0;
 				}
 				
 				$this->insert( $row, $name, $this->dbname, $table_name );
