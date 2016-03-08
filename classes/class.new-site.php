@@ -995,7 +995,55 @@ class NewSite extends Site
 	}
 	public function create_table_ngg_gallery()
 	{
-		$this->create_table_for_all_blogs( 'ngg_gallery' );
+		foreach( array_merge( array( $this->base_blog ), $this->blogs ) as $blog )
+		{
+			$this->create_table_ngg_gallery_for_blog( $blog );
+		}
+	}
+	protected function create_table_ngg_gallery_for_blog( $blog )
+	{
+		$name = 'ngg_gallery';
+		echo2( "\n   Create ngg_gallery table for blog {$this->name}.{$blog->new_id} from {$blog->old_site->name}.{$blog->old_id}..." );
+		
+		$op = '';
+		if( $blog->old_id > 1 ) {
+			$op = "{$blog->old_id}_";
+		}
+		$np = '';
+		if( $blog->new_id > 1 ) {
+			$np = "{$blog->new_id}_";
+		}
+		
+		$table_name = $this->add_prefix( $np.$name );
+		if( ! $blog->old_site->table_exists( $blog->old_site->add_prefix( $op.$name ) ) ) {
+			echo2( "done.\n      Table does not exist." );
+			return;
+		}
+		
+		$this->create_table( $blog->old_site, $op.$name, $table_name );
+
+		$count = 0;
+		while( $rows = $blog->old_site->get_blog_table_row_list( $blog->old_id, $name, $count, 1000 ) )
+		{
+			echo2( '.' );
+			
+			foreach( $rows as $row )
+			{
+				if( $row['author'] ) {
+					$row['author'] = $this->get_new_user_id( $blog->old_site->name, $row['author'] );
+				} else {
+					$row['author'] = 0;
+				}
+				
+				$row['path'] = "wp-content/uploads/sites/{$blog->new_id}/{$row['name']}";
+				
+				$this->insert( $row, $name, $this->dbname, $table_name );
+			}
+			
+			$count++;
+		}
+		
+		echo2( "done." );
 	}
 	public function create_table_ngg_pictures()
 	{
