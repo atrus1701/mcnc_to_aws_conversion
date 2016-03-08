@@ -119,7 +119,30 @@ function populate_plugin_site_tables()
 	create_table_orghub_type();
 	create_table_orghub_upload();
 	create_table_orghub_user();
+}
+function populate_plugin_blog_tables()
+{
+	echo2( "\n" );
+	create_table_frm_forms();
+	create_table_frm_fields();
+	create_table_frm_items();
+	create_table_frm_item_metas();
 
+	echo2( "\n" );
+	create_table_wpmm_subscribers();
+
+	echo2( "\n" );
+	create_table_ngg_album();
+	create_table_ngg_gallery();
+	create_table_ngg_pictures();
+
+	echo2( "\n" );
+	create_table_redirection_404();
+	create_table_redirection_groups();
+	create_table_redirection_items();
+	create_table_redirection_logs();
+	create_table_redirection_modules();
+	
 	echo2( "\n" );
 	create_table_woocommerce_api_keys();
 	create_table_woocommerce_attribute_taxonomies();
@@ -162,35 +185,12 @@ function populate_plugin_site_tables()
 	create_table_ai1ec_event_category_meta();
 	create_table_ai1ec_event_feeds();
 	create_table_ai1ec_event_instances();
-	create_table_ai1ec_events();
-	
+	create_table_ai1ec_events();	
+
 	echo2( "\n" );
 //	Don't copy...
 //	create_table_smackcsv_line_log();
 //	create_table_smackcsv_pie_log();
-}
-function populate_plugin_blog_tables()
-{
-	echo2( "\n" );
-	create_table_frm_forms();
-	create_table_frm_fields();
-	create_table_frm_items();
-	create_table_frm_item_metas();
-
-	echo2( "\n" );
-	create_table_wpmm_subscribers();
-
-	echo2( "\n" );
-	create_table_ngg_album();
-	create_table_ngg_gallery();
-	create_table_ngg_pictures();
-
-	echo2( "\n" );
-	create_table_redirection_404();
-	create_table_redirection_groups();
-	create_table_redirection_items();
-	create_table_redirection_logs();
-	create_table_redirection_modules();
 }
 function find_and_replace()
 {
