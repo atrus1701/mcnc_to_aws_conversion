@@ -61,7 +61,7 @@ class Site
 		$create_table_sql = str_replace( array( "\r\n", "\r", "\n" ), '', $create_table_sql );
 		
 		if( $remove_prefix ) {
-			$create_table_sql = str_replace( "`{$this->dbprefix}{$table_name}`", "`", $create_table_sql );
+			$create_table_sql = str_replace( "`{$this->dbprefix}{$table_name}`", "`{$table_name}`", $create_table_sql );
 		}
 	
 		return $create_table_sql;
